@@ -1,12 +1,33 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <EditText
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context="${packageName}.${activityClass}">
+                android:layout_height="fill_parent"
+                android:hint="@string/Direccion"
+                android:id="@+id/txtDireccion"/>
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Buscar"
+                android:id="@+id/btnBuscar" android:layout_gravity="right"/>
+    </LinearLayout>
 
-    <TextView
-            android:text="@string/hello_world"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:map="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/map"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:name="com.google.android.gms.maps.MapFragment"
 
-</RelativeLayout>
+
+
+            />
+</LinearLayout>
+
