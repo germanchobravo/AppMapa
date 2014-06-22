@@ -1,27 +1,33 @@
 package test.prueba.appmapa.app;
 
 import android.app.Activity;
-import android.location.Address;
-import android.location.Geocoder;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.*;
+import android.widget.AdapterView.OnItemClickListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.List;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements OnItemClickListener {
 
     static final  LatLng santiago = new LatLng(-33.796923, -70.922433);
 
@@ -40,76 +46,128 @@ public class MainActivity extends Activity {
 
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(santiago,10));
 
-        final EditText txtDireccion = (EditText) findViewById(R.id.txtDireccion);
+        //final EditText txtDireccion = (EditText) findViewById(R.id.txtDireccion);
         Button btnBuscar = (Button) findViewById(R.id.btnBuscar);
 
-        btnBuscar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String location = txtDireccion.getText().toString();
-                if(location == null || location.equals(""))
-                {
-                    Toast.makeText(getBaseContext(), "ingrese direccion",Toast.LENGTH_SHORT).show();
+        AutoCompleteTextView autoCompView = (AutoCompleteTextView) findViewById(R.id.txtAutoComplete);
+        autoCompView.setAdapter(new PlacesAutoCompleteAdapter(this, android.R.layout.simple_list_item_1));
+        autoCompView.setOnItemClickListener(this);
 
-                }else
-                {
-                    new GeoCoderTask().execute(location);
-                }
-
-            }
-        });
     }
 
-    private class GeoCoderTask extends AsyncTask<String, Void, List<Address>>{
-        @Override
-        protected List<Address> doInBackground(String... locationName) {
-            Geocoder geocoder = new Geocoder(getBaseContext());
-            List<Address> addresses = null;
+    private static final String LOG_TAG = "ExampleApp";
 
-            try{
-                addresses = geocoder.getFromLocationName(locationName[0], 3);
+    private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
 
-            }catch (IOException e)
-            {
-                e.printStackTrace();
+    private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
+    private static final String TYPE_DETAILS = "/details";
+    private static final String OUT_JSON = "/json";
+
+    private static final String API_KEY = "AIzaSyBuWERTOvSMXXiUggUVh6ZRMJ3jQghBybc";
+
+    private ArrayList<Localidad> autocomplete(String input) {
+        ArrayList<Localidad> resultList = null;
+
+        HttpURLConnection conn = null;
+        StringBuilder jsonResults = new StringBuilder();
+        try {
+            StringBuilder sb = new StringBuilder(PLACES_API_BASE + TYPE_AUTOCOMPLETE + OUT_JSON);
+            sb.append("?sensor=false&key=" + API_KEY);
+            sb.append("&components=country:cl");
+            sb.append("&input=" + URLEncoder.encode(input, "utf8"));
+
+            URL url = new URL(sb.toString());
+            conn = (HttpURLConnection) url.openConnection();
+            InputStreamReader in = new InputStreamReader(conn.getInputStream());
+
+            // Load the results into a StringBuilder
+            int read;
+            char[] buff = new char[1024];
+            while ((read = in.read(buff)) != -1) {
+                jsonResults.append(buff, 0, read);
+            }
+        } catch (java.net.MalformedURLException e) {
+            Log.e(LOG_TAG, "Error processing Places API URL", e);
+
+        } catch (java.io.IOException e) {
+            Log.e(LOG_TAG, "Error connecting to Places API", e);
+
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+
+        try {
+
+            // Create a JSON object hierarchy from the results
+            JSONObject jsonObj = new JSONObject(jsonResults.toString());
+            JSONArray predsJsonArray = jsonObj.getJSONArray("predictions");
+
+            // Extract the Place descriptions from the results
+            resultList = new ArrayList<Localidad>(predsJsonArray.length());
+            for (int i = 0; i < predsJsonArray.length(); i++) {
+                Localidad ug = new Localidad();
+
+                ug.SetId(predsJsonArray.getJSONObject(i).getString("id"));
+                ug.SetDescripcion(predsJsonArray.getJSONObject(i).getString("description"));
+                ug.SetReferencia(predsJsonArray.getJSONObject(i).getString("reference"));
+                resultList.add(ug);
+
             }
 
-            return addresses;
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Cannot process JSON results", e);
+        }
+
+        return resultList;
+    }
+
+    private class PlacesAutoCompleteAdapter extends ArrayAdapter<Localidad> implements Filterable {
+        private ArrayList<Localidad> resultList;
+
+        public PlacesAutoCompleteAdapter(Context context, int textViewResourceId) {
+            super(context, textViewResourceId);
         }
 
         @Override
-        protected void onPostExecute(List<Address> addresses) {
-            if(addresses == null || addresses.size() == 0)
-            {
-                Toast.makeText(getBaseContext(), "Direccion no encontrada",Toast.LENGTH_LONG).show();
-            }
+        public int getCount() {
+            return resultList.size();
+        }
 
-            map.clear();
+        @Override
+        public Localidad getItem(int index) {
 
-            for (int i = 0; i < addresses.size(); i++)
-            {
-                Address address = addresses.get(i);
+            return (Localidad)resultList.get(index);
+        }
 
-                latLng = new LatLng(address.getLatitude(), address.getLongitude());
+        @Override
+        public Filter getFilter() {
+            Filter filter = new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    FilterResults filterResults = new FilterResults();
+                    if (constraint != null) {
+                        // Retrieve the autocomplete results.
+                        resultList = autocomplete(constraint.toString());
 
-                String addresText = String.format("%s, %s",
-                address.getMaxAddressLineIndex() > 0 ? address.getAddressLine(0) : "",
-                address.getLocality());
-
-                markerOptions = new MarkerOptions();
-                markerOptions.position(latLng);
-                markerOptions.title(addresText);
-
-                map.addMarker(markerOptions);
-
-                if(i == 0)
-                {
-                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                        // Assign the data to the FilterResults
+                        filterResults.values = resultList;
+                        filterResults.count = resultList.size();
+                    }
+                    return filterResults;
                 }
 
-            }
-
-
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    if (results != null && results.count > 0) {
+                        notifyDataSetChanged();
+                    }
+                    else {
+                        notifyDataSetInvalidated();
+                    }
+                }};
+            return filter;
         }
     }
 
@@ -135,4 +193,106 @@ public class MainActivity extends Activity {
         }
 
     }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        Localidad localidad = (Localidad) adapterView.getItemAtPosition(position);
+
+
+        DownloadTask detaisTask = new DownloadTask();
+
+        // Getting url to the Google Places details api
+        String url = localidad.GetReferencia();
+
+        // Start downloading Google Place Details
+        // This causes to execute doInBackground() of DownloadTask class
+        detaisTask.execute(url);
+
+    }
+
+
+    /** A method to download json data from url */
+    private String downloadUrl(String referencia) throws IOException {
+        String data = "";
+
+            HttpURLConnection conn = null;
+            StringBuilder jsonResults = new StringBuilder();
+            try {
+                StringBuilder sb = new StringBuilder(PLACES_API_BASE + TYPE_DETAILS + OUT_JSON);
+                sb.append("?sensor=false&key=" + API_KEY);
+                sb.append("&reference=" + referencia);
+
+                URL url = new URL(sb.toString());
+                conn = (HttpURLConnection) url.openConnection();
+                InputStreamReader in = new InputStreamReader(conn.getInputStream());
+
+                // Load the results into a StringBuilder
+                int read;
+                char[] buff = new char[1024];
+                while ((read = in.read(buff)) != -1) {
+                    jsonResults.append(buff, 0, read);
+                }
+
+                data = jsonResults.toString();
+
+            } catch (Exception e) {
+                Log.d("Exception while downloading url", e.toString());
+            } finally {
+                if(conn != null) {
+                    conn.disconnect();
+                }
+            }
+
+        return data;
+    }
+
+    // Fetches data from url passed
+    private class DownloadTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... url) {
+
+            String data = "";
+
+            try{
+                data = downloadUrl(url[0]);
+            }catch(Exception e){
+                Log.d("Background Task",e.toString());
+            }
+            return data;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+
+            try {
+                JSONObject jsonObj = new JSONObject(result);
+
+                Double lat = (Double)jsonObj.getJSONObject("result").getJSONObject("geometry").getJSONObject("location").get("lat");
+                Double lng = (Double)jsonObj.getJSONObject("result").getJSONObject("geometry").getJSONObject("location").get("lng");
+
+
+                map.clear();
+
+                latLng = new LatLng(lat, lng);
+
+
+
+                markerOptions = new MarkerOptions();
+                markerOptions.position(latLng);
+                //markerOptions.title(addresText);
+
+                map.addMarker(markerOptions);
+
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 }
