@@ -286,7 +286,7 @@ public class MainActivity extends Activity implements OnItemClickListener {
 
                 map.addMarker(markerOptions);
 
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
 
             } catch (JSONException e) {
                 e.printStackTrace();
