@@ -14,9 +14,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,7 +46,6 @@ public class MainActivity extends Activity implements OnItemClickListener {
 
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(santiago,10));
 
-        //final EditText txtDireccion = (EditText) findViewById(R.id.txtDireccion);
         Button btnBuscar = (Button) findViewById(R.id.btnBuscar);
 
         AutoCompleteTextView autoCompView = (AutoCompleteTextView) findViewById(R.id.txtAutoComplete);
@@ -100,21 +99,8 @@ public class MainActivity extends Activity implements OnItemClickListener {
 
         try {
 
-            // Create a JSON object hierarchy from the results
             JSONObject jsonObj = new JSONObject(jsonResults.toString());
-            JSONArray predsJsonArray = jsonObj.getJSONArray("predictions");
-
-            // Extract the Place descriptions from the results
-            resultList = new ArrayList<Localidad>(predsJsonArray.length());
-            for (int i = 0; i < predsJsonArray.length(); i++) {
-                Localidad ug = new Localidad();
-
-                ug.SetId(predsJsonArray.getJSONObject(i).getString("id"));
-                ug.SetDescripcion(predsJsonArray.getJSONObject(i).getString("description"));
-                ug.SetReferencia(predsJsonArray.getJSONObject(i).getString("reference"));
-                resultList.add(ug);
-
-            }
+            resultList = LocalidadJSONParser.parse(jsonObj);
 
         } catch (Exception e) {
             Log.e(LOG_TAG, "Cannot process JSON results", e);
@@ -148,10 +134,9 @@ public class MainActivity extends Activity implements OnItemClickListener {
                 protected FilterResults performFiltering(CharSequence constraint) {
                     FilterResults filterResults = new FilterResults();
                     if (constraint != null) {
-                        // Retrieve the autocomplete results.
+
                         resultList = autocomplete(constraint.toString());
 
-                        // Assign the data to the FilterResults
                         filterResults.values = resultList;
                         filterResults.count = resultList.size();
                     }
@@ -201,11 +186,8 @@ public class MainActivity extends Activity implements OnItemClickListener {
 
         DownloadTask detaisTask = new DownloadTask();
 
-        // Getting url to the Google Places details api
         String url = localidad.GetReferencia();
 
-        // Start downloading Google Place Details
-        // This causes to execute doInBackground() of DownloadTask class
         detaisTask.execute(url);
 
     }
@@ -270,23 +252,20 @@ public class MainActivity extends Activity implements OnItemClickListener {
             try {
                 JSONObject jsonObj = new JSONObject(result);
 
-                Double lat = (Double)jsonObj.getJSONObject("result").getJSONObject("geometry").getJSONObject("location").get("lat");
-                Double lng = (Double)jsonObj.getJSONObject("result").getJSONObject("geometry").getJSONObject("location").get("lng");
-
+                PuntoGeografico punto = LocalidadDetalleJSONParser.parse(jsonObj);
 
                 map.clear();
 
-                latLng = new LatLng(lat, lng);
-
-
+                latLng = new LatLng(punto.GetLat(),punto.GetLng());
 
                 markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
-                //markerOptions.title(addresText);
 
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_maps_indicator_current_position));
                 map.addMarker(markerOptions);
 
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+
 
             } catch (JSONException e) {
                 e.printStackTrace();
