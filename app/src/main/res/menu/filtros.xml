@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_current_location"
+          android:title="@string/ubicacion_actual"
+          android:icon="@drawable/ic_maps_indicator_current_position"
+          android:showAsAction="always" />
+
     <item android:id="@+id/action_filtros"
           android:title="@string/filtros"
           android:icon="@drawable/ic_action_search"
           android:showAsAction="always"  />
+
 
 </menu>

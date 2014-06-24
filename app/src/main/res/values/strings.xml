@@ -7,5 +7,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="Buscar">Buscar</string>
     <string name="Direccion">Direccion</string>
+    <string name="ubicacion_actual">Ubicación actual</string>
 
 </resources>
