@@ -2,6 +2,7 @@ package test.prueba.appmapa.app;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import test.prueba.appmapa.app.Dominio.PuntoGeografico;
 
 /**
  * Created by gbravo on 6/22/14.

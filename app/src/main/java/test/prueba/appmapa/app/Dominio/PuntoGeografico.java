@@ -1,4 +1,4 @@
-package test.prueba.appmapa.app;
+package test.prueba.appmapa.app.Dominio;
 
 /**
  * Created by gbravo on 6/22/14.

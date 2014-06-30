@@ -8,5 +8,10 @@
     <string name="Buscar">Buscar</string>
     <string name="Direccion">Direccion</string>
     <string name="ubicacion_actual">Ubicación actual</string>
+    <string name="listado">listado</string>
+    <string name="guardar_busqueda">guardar busqueda</string>
+    <string name="lista">lista</string>
+    <string name="guardar">guardar</string>
+    <string name="info_local">info local</string>
 
 </resources>

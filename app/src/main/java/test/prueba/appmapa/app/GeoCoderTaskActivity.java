@@ -119,7 +119,7 @@ public class GeoCoderTaskActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.filtros,menu);
+        inflater.inflate(R.menu.menu_inferior,menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -128,7 +128,7 @@ public class GeoCoderTaskActivity extends Activity {
 
         switch (item.getItemId())
         {
-            case R.id.action_filtros:
+            case R.id.action_lista:
                 Toast.makeText(this,"aca va el filtro", Toast.LENGTH_LONG).show();
 
                 return true;

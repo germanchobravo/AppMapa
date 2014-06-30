@@ -3,6 +3,7 @@ package test.prueba.appmapa.app;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import test.prueba.appmapa.app.Dominio.Localidad;
 
 import java.util.ArrayList;
 
