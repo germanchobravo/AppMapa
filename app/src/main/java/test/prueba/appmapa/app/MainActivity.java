@@ -1,10 +1,12 @@
 package test.prueba.appmapa.app;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -21,11 +23,20 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        View view = View.inflate(getApplicationContext(), R.layout.actionbar_top,
+                null);
+        actionBar.setCustomView(view);
+
         fragmentMap = new FragmentMap();
+        fragmentList = new FragmentList();
 
         android.app.FragmentManager fm = getFragmentManager();
         fm.beginTransaction()
                 .add(android.R.id.content, fragmentMap)
+                .add(android.R.id.content, fragmentList)
+                .hide(fragmentList)
                 .commit();
 
     }
@@ -34,6 +45,7 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_inferior,menu);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -46,10 +58,27 @@ public class MainActivity extends Activity {
 
                 android.app.FragmentManager fm = getFragmentManager();
 
-                fragmentList = new FragmentList();
-                fm.beginTransaction().add(android.R.id.content, fragmentList).commit();
+                if(fragmentList.isVisible())
+                {
+                    fm.beginTransaction()
+                            .hide(fragmentList)
+                            //.remove(fragmentList)
+                            .show(fragmentMap)
+                            .commit();
 
-                fm.beginTransaction().hide(fragmentMap).commit();
+                    item.setTitle("Lista");
+                }else
+                {
+                    fm.beginTransaction()
+                            .hide(fragmentMap)
+                            .show(fragmentList)
+                            .commit();
+
+                    item.setTitle("Mapa");
+
+                }
+
+
 
 
                 return true;

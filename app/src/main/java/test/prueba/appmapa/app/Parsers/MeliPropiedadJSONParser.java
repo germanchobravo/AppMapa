@@ -1,4 +1,4 @@
-package test.prueba.appmapa.app;
+package test.prueba.appmapa.app.Parsers;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -62,12 +62,18 @@ public class MeliPropiedadJSONParser {
 
             propiedad.setId(jPropiedad.getString("id"));
             propiedad.setTitle(jPropiedad.getString("title"));
-            propiedad.setLat((Double)jPropiedad.getJSONObject("location").get("latitude"));
-            propiedad.setLng((Double)jPropiedad.getJSONObject("location").get("longitude"));
+            if(!jPropiedad.getJSONObject("location").get("latitude").equals("")
+                    && !jPropiedad.getJSONObject("location").get("longitude").equals("")) {
+                propiedad.setLat((Double) jPropiedad.getJSONObject("location").get("latitude"));
+                propiedad.setLng((Double) jPropiedad.getJSONObject("location").get("longitude"));
+            }
+
+            propiedad.setUrlImagen(jPropiedad.getString("gallery_picture"));
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         return propiedad;
     }
 

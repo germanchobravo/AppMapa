@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item android:id="@+id/action_current_location"
           android:title="@string/info_local"
@@ -8,8 +8,7 @@
 
     <item android:id="@+id/action_guardar_busqueda"
           android:title="@string/guardar_busqueda"
-          android:showAsAction="always"
-          />
+          android:showAsAction="always" />
 
     <item android:id="@+id/action_lista"
           android:title="@string/lista"

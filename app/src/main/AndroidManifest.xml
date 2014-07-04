@@ -32,8 +32,9 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:theme="@style/AppTheme"
 
-         >
+        >
 
         <!-- TODO: Insert your Maps API key here. See this page for more information:
              https://developers.google.com/maps/documentation/android/start#the_google_maps_api_key -->
@@ -49,9 +50,11 @@
 
         <activity
             android:name="test.prueba.appmapa.app.SplashScreen"
-            android:label="@string/app_name"
             android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppTheme.NoActionBar"
             >
+            <!--android:theme="@android:style/Theme.Black.NoTitleBar"-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -61,7 +64,8 @@
         <activity
                 android:name=".MainActivity"
                 android:label="@string/app_name"
-                android:uiOptions="splitActionBarWhenNarrow">
+                android:uiOptions="splitActionBarWhenNarrow"
+                >
             <intent-filter>
                 <action android:name="test.prueba.appmapa.app.MainActivity" />
                 <category android:name="android.intent.category.DEFAULT" />

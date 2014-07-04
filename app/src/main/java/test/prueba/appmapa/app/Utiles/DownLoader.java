@@ -1,17 +1,25 @@
 package test.prueba.appmapa.app.Utiles;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * Created by gbravo on 6/29/14.
  */
 public class DownLoader {
     /** A method to download json data from url */
+
+    public static final String API_MELI_BASE = "https://mobile.mercadolibre.com.ar/sites/MLC/search?category=MLC1480" +
+            "&state=TUxDUE1FVEExM2JlYg&city=TUxDQ1NBTjk4M2M";
+
     public static String DownloadUrl(String url) throws IOException {
         String data = "";
 
@@ -41,5 +49,25 @@ public class DownLoader {
         }
 
         return data;
+    }
+
+    public static Bitmap LoadImagenFromUrl(URL link)
+    {
+        Bitmap bitmap = null;
+        InputStream in = null;
+        //HttpURLConnection conn;
+        try {
+            //in = link.openConnection().getInputStream();
+
+            URLConnection conn =  link.openConnection();
+            in = conn.getInputStream();
+
+            bitmap = BitmapFactory.decodeStream(in, null, null);
+            in.close();
+
+        }catch (IOException e) { }
+
+        return bitmap;
+
     }
 }

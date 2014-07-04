@@ -1,4 +1,4 @@
-package test.prueba.appmapa.app;
+package test.prueba.appmapa.app.Parsers;
 
 import org.json.JSONArray;
 import org.json.JSONException;

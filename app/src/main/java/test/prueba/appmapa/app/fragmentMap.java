@@ -2,6 +2,7 @@ package test.prueba.appmapa.app;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -20,6 +21,9 @@ import org.json.JSONObject;
 import test.prueba.appmapa.app.Dominio.Localidad;
 import test.prueba.appmapa.app.Dominio.Propiedad;
 import test.prueba.appmapa.app.Dominio.PuntoGeografico;
+import test.prueba.appmapa.app.Parsers.LocalidadDetalleJSONParser;
+import test.prueba.appmapa.app.Parsers.LocalidadJSONParser;
+import test.prueba.appmapa.app.Parsers.MeliPropiedadJSONParser;
 import test.prueba.appmapa.app.Utiles.DownLoader;
 import test.prueba.appmapa.app.task.DownLoaderTask;
 import test.prueba.appmapa.app.task.IAsyncTaskDelegate;
@@ -63,7 +67,10 @@ public class FragmentMap extends Fragment implements OnItemClickListener {
     private LocationManager mLocationManager;
     private CurrentLocationTask getCurrentLocationTask;
 
-
+    @Override
+    public void onActivityCreated(Bundle savedState) {
+        super.onActivityCreated(savedState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -72,7 +79,7 @@ public class FragmentMap extends Fragment implements OnItemClickListener {
         View view = inflater.inflate(R.layout.fragment_mapa, container, false);
 
         map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-        map.setMyLocationEnabled(true);
+        //map.setMyLocationEnabled(true);
 
 
         AutoCompleteTextView autoCompView = (AutoCompleteTextView)view.findViewById(R.id.txtAutoComplete);
@@ -80,6 +87,7 @@ public class FragmentMap extends Fragment implements OnItemClickListener {
 
         autoCompView.setAdapter(new PlacesAutoCompleteAdapter(inflater.getContext(), android.R.layout.simple_list_item_1));
         autoCompView.setOnItemClickListener(this);
+
         getCurrentLocationTask = new CurrentLocationTask();
         getCurrentLocationTask.execute();
 
@@ -116,16 +124,21 @@ public class FragmentMap extends Fragment implements OnItemClickListener {
     private void pintarPropiedades(JSONObject jsonObj) {
         ArrayList<Propiedad> propiedades = MeliPropiedadJSONParser.parse(jsonObj);
 
-        map.clear();
+        //map.clear();
+
         /** Taking each place, parses and adds to list object */
+
+
         for(int i=0; i<propiedades.size();i++){
 
-            latLng = new LatLng(propiedades.get(i).getLat(),propiedades.get(i).getLng());
-            markerOptions = new MarkerOptions();
-            markerOptions.position(latLng);
-            markerOptions.title(propiedades.get(i).getTitle());
-            map.addMarker(markerOptions);
-
+            if(propiedades.get(i).getLat() != null && propiedades.get(i).getLng() != null) {
+                latLng = new LatLng(propiedades.get(i).getLat(), propiedades.get(i).getLng());
+                markerOptions = new MarkerOptions();
+                markerOptions.position(latLng);
+                markerOptions.title(propiedades.get(i).getTitle());
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_propiedades));
+                map.addMarker(markerOptions);
+            }
         }
     }
 
@@ -148,6 +161,13 @@ public class FragmentMap extends Fragment implements OnItemClickListener {
                 pintarPropiedades(jsonObject);
 
             }
+
+            @Override
+            public void onTaskComplete(Bitmap imagen, RelativeLayout relativeLayout) {
+
+            }
+
+
         };
 
         StringBuilder url = new StringBuilder(API_MELI_BASE);
@@ -170,7 +190,15 @@ public class FragmentMap extends Fragment implements OnItemClickListener {
                     e.printStackTrace();
                 }
 
-            };
+            }
+
+            @Override
+            public void onTaskComplete(Bitmap imagen, RelativeLayout relativeLayout) {
+
+
+            }
+
+
         };
 
         DownLoaderTask detaisTask = new DownLoaderTask(delegado);
@@ -242,7 +270,7 @@ public class FragmentMap extends Fragment implements OnItemClickListener {
         @Override
         public Localidad getItem(int index) {
 
-            return (Localidad)resultList.get(index);
+            return resultList.get(index);
         }
 
         @Override
@@ -327,7 +355,7 @@ public class FragmentMap extends Fragment implements OnItemClickListener {
         markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
 
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_maps_indicator_current_position));
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_donde_estoy));
         map.addMarker(markerOptions);
 
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
