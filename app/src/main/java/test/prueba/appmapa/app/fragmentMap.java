@@ -2,7 +2,6 @@ package test.prueba.appmapa.app;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -162,12 +161,6 @@ public class FragmentMap extends Fragment implements OnItemClickListener {
 
             }
 
-            @Override
-            public void onTaskComplete(Bitmap imagen, RelativeLayout relativeLayout) {
-
-            }
-
-
         };
 
         StringBuilder url = new StringBuilder(API_MELI_BASE);
@@ -191,13 +184,6 @@ public class FragmentMap extends Fragment implements OnItemClickListener {
                 }
 
             }
-
-            @Override
-            public void onTaskComplete(Bitmap imagen, RelativeLayout relativeLayout) {
-
-
-            }
-
 
         };
 

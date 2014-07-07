@@ -4,17 +4,16 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import org.json.JSONObject;
 import test.prueba.appmapa.app.Dominio.Propiedad;
 import test.prueba.appmapa.app.R;
 import test.prueba.appmapa.app.task.DownLoaderImageTask;
-import test.prueba.appmapa.app.task.IAsyncTaskDelegate;
+import test.prueba.appmapa.app.task.IAsyncTaskDelegateImage;
 
 import java.util.ArrayList;
 
@@ -27,17 +26,17 @@ public class ListadoPropiedadesAdapter extends ArrayAdapter<Propiedad> {
     ArrayList<Propiedad> propiedades;
 
 
-    public ListadoPropiedadesAdapter(Context context, int resource, int textViewResourceId, ArrayList<Propiedad> objects) {
-        super(context, resource, textViewResourceId, objects);
+    public ListadoPropiedadesAdapter(Context context, int textViewResourceId, ArrayList<Propiedad> objects) {
+        super(context, textViewResourceId, objects);
 
         this.inf = LayoutInflater.from(context);
         this.propiedades = objects;
 
     }
 
-    public interface IPrueba
-    {
-
+    @Override
+    public int getCount() {
+        return this.propiedades.size();
     }
 
     @Override
@@ -55,45 +54,52 @@ public class ListadoPropiedadesAdapter extends ArrayAdapter<Propiedad> {
             holder = new ViewHolder();
             holder.txtID = (TextView)row.findViewById(R.id.txtID);
             holder.txtDireccion = (TextView)row.findViewById(R.id.txtDireccion);
-            holder.relativeLayout = (RelativeLayout)row.findViewById(R.id.contenedor);
             row.setTag(holder);
-
-
 
         }else
         {
             holder = (ViewHolder) row.getTag();
+            row.setBackground(null);
         }
 
 
         String urlImagen = currentPropiedad.getUrlImagen();
 
-        Bitmap imagen = null;
 
-        if(urlImagen != "") {
+        if(urlImagen != "" && currentPropiedad.getDrawableImagen() == null) {
 
-            IAsyncTaskDelegate delagado = new IAsyncTaskDelegate() {
-                @Override
-                public void onTaskComplete(JSONObject jsonObject) {
-
-                }
+            IAsyncTaskDelegateImage delagado = new IAsyncTaskDelegateImage() {
 
                 @Override
-                public void onTaskComplete(Bitmap imagen, RelativeLayout relativeLayout) {
+                public void onTaskComplete(Bitmap imagen,int position, View view) {
 
                     if(imagen != null)
                     {
                         Drawable drawable = new BitmapDrawable(getContext().getResources(), imagen);
-
-                        relativeLayout.setBackground(drawable);
+                        Propiedad prop = propiedades.get(position);
+                        prop.setDrawableImagen(drawable);
+                        view.setBackground(drawable);
                     }
 
                 }
+
+
             };
-            DownLoaderImageTask downLoadImagen = new DownLoaderImageTask(delagado, holder.relativeLayout);
+
+            DownLoaderImageTask downLoadImagen = new DownLoaderImageTask(delagado, position, row);
             downLoadImagen.execute(urlImagen);
 
+        }else
+        {
+            if(Build.VERSION.SDK_INT >= 16) {
+                row.setBackground(currentPropiedad.getDrawableImagen());
+            }else
+            {
+                row.setBackgroundDrawable(currentPropiedad.getDrawableImagen());
+            }
+
         }
+
 
         holder.txtID.setText(currentPropiedad.getId());
         holder.txtDireccion.setText(currentPropiedad.getTitle());
@@ -102,8 +108,6 @@ public class ListadoPropiedadesAdapter extends ArrayAdapter<Propiedad> {
     }
 
     static class ViewHolder {
-
-        public RelativeLayout relativeLayout;
         public TextView txtID;
         public TextView txtDireccion;
     }

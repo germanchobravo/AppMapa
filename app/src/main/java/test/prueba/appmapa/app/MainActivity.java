@@ -24,6 +24,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         ActionBar actionBar = getActionBar();
+        //actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_HOME_AS_UP);
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         View view = View.inflate(getApplicationContext(), R.layout.actionbar_top,
                 null);

@@ -3,7 +3,7 @@ package test.prueba.appmapa.app.task;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.RelativeLayout;
+import android.view.View;
 import test.prueba.appmapa.app.Utiles.DownLoader;
 
 import java.net.MalformedURLException;
@@ -13,21 +13,20 @@ import java.net.URL;
  * Created by gbravo on 7/2/14.
  */
 public class DownLoaderImageTask extends AsyncTask<String, Void, Bitmap> {
-    public IAsyncTaskDelegate delegado;
-    private RelativeLayout rl = null;
+    public IAsyncTaskDelegateImage delegado;
+    private View content = null;
+    private int position = 0;
 
     Bitmap imagen = null;
 
-    public DownLoaderImageTask(IAsyncTaskDelegate del, RelativeLayout _rl) {
+    public DownLoaderImageTask(IAsyncTaskDelegateImage del,int position, View content) {
         this.delegado = del;
-        this.rl = _rl;
+        this.content = content;
+        this.position = position;
     }
 
     @Override
     protected Bitmap doInBackground(String... url) {
-
-
-
         try{
             URL _url = new URL(url[0]);
 
@@ -51,7 +50,7 @@ public class DownLoaderImageTask extends AsyncTask<String, Void, Bitmap> {
             if(imagen != null && !isCancelled())
             {
 
-                delegado.onTaskComplete(imagen, this.rl);
+                delegado.onTaskComplete(imagen, this.position, this.content);
 
             }
 

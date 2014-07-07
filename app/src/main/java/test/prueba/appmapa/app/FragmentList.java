@@ -1,11 +1,9 @@
 package test.prueba.appmapa.app;
 
 import android.app.ListFragment;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.AbsListView;
-import android.widget.RelativeLayout;
 import org.json.JSONObject;
 import test.prueba.appmapa.app.Dominio.Propiedad;
 import test.prueba.appmapa.app.Parsers.MeliPropiedadJSONParser;
@@ -35,7 +33,7 @@ public class FragmentList extends ListFragment  implements AbsListView.OnScrollL
         ArrayList<Propiedad> propiedades = MeliPropiedadJSONParser.parse(jsonObj);
 
         this.setListAdapter(new ListadoPropiedadesAdapter(
-                getActivity(),R.layout.fragment_list,0, propiedades));
+                getActivity(), R.layout.fragment_list, propiedades));
 
 
     }
@@ -89,11 +87,6 @@ public class FragmentList extends ListFragment  implements AbsListView.OnScrollL
             @Override
             public void onTaskComplete(JSONObject jsonObject) {
                 listarPropiedades(jsonObject);
-            }
-
-            @Override
-            public void onTaskComplete(Bitmap imagen, RelativeLayout relativeLayout) {
-
             }
 
         };

@@ -7,13 +7,13 @@
     </style>-->
     <style name="AppTheme" parent="@android:style/Theme.Holo.Light" >
         <item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>
-        <item name="android:actionMenuTextColor">@color/actionbar_top</item>
+        <item name="android:actionMenuTextColor">@color/letra_menu_bottom</item>
     </style>
 
     <style name="AppTheme.ActionBar"
            parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">@color/actionbar_top</item>
-        <item name="android:backgroundSplit">@color/actionbar_bottom</item>
+        <item name="android:backgroundSplit" >@color/actionbar_bottom</item>
 
     </style>
 
@@ -25,5 +25,6 @@
     <style name="AppTheme.ActionBar.TitleTextStyle" parent="@android:style/TextAppearance">
         <item name="android:textColor">#ffffff</item>
     </style>
-    
+
+    <color name="letra_menu_bottom">#75bae3</color>
 </resources>
