@@ -1,6 +1,7 @@
 package test.prueba.appmapa.app;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
@@ -17,6 +18,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONObject;
+import test.prueba.appmapa.app.Dominio.Filtros;
 import test.prueba.appmapa.app.Dominio.Localidad;
 import test.prueba.appmapa.app.Dominio.Propiedad;
 import test.prueba.appmapa.app.Dominio.PuntoGeografico;
@@ -65,6 +67,7 @@ public class FragmentMap extends Fragment implements OnItemClickListener {
     // Reference to the LocationManager and LocationListener
     private LocationManager mLocationManager;
     private CurrentLocationTask getCurrentLocationTask;
+    MapFragment mapaFragment;
 
     @Override
     public void onActivityCreated(Bundle savedState) {
@@ -72,23 +75,90 @@ public class FragmentMap extends Fragment implements OnItemClickListener {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
 
-        View view = inflater.inflate(R.layout.fragment_mapa, container, false);
+    }
 
-        map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-        //map.setMyLocationEnabled(true);
+    public static FragmentMap newInstance(Bundle arguments){
+        FragmentMap f = new FragmentMap();
+        if(arguments != null){
+            f.setArguments(arguments);
+        }
+        return f;
+    }
+
+    private Filtros filtros;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle arguments = getArguments();
+
+        String localidadReferencia;
+
+        if(arguments != null)
+        {
+
+            filtros = new Filtros();
+            localidadReferencia = getArguments()
+                    .getString("localidadReferencia");
+
+            filtros.setLocalidadReferencia(localidadReferencia);
 
 
-        AutoCompleteTextView autoCompView = (AutoCompleteTextView)view.findViewById(R.id.txtAutoComplete);
+        }
 
+    }
 
-        autoCompView.setAdapter(new PlacesAutoCompleteAdapter(inflater.getContext(), android.R.layout.simple_list_item_1));
-        autoCompView.setOnItemClickListener(this);
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        map = mapaFragment.getMap();
 
         getCurrentLocationTask = new CurrentLocationTask();
         getCurrentLocationTask.execute();
+
+        if(filtros != null)
+        {
+            RecibeLocalidadReferencia(filtros.getLocalidadReferencia());
+        }
+    }
+
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.fragment_mapa, container, false);
+
+        mapaFragment = MapFragment.newInstance();
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.add(R.id.map_container, mapaFragment).commit();
+
+        //map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        //map.setMyLocationEnabled(true);
+
+
+        /*AutoCompleteTextView autoCompView = (AutoCompleteTextView)view.findViewById(R.id.txtAutoComplete);
+
+
+        autoCompView.setAdapter(new PlacesAutoCompleteAdapter(inflater.getContext(), android.R.layout.simple_list_item_1));
+        autoCompView.setOnItemClickListener(this);*/
 
         return view;
 
@@ -166,6 +236,33 @@ public class FragmentMap extends Fragment implements OnItemClickListener {
         StringBuilder url = new StringBuilder(API_MELI_BASE);
         DownLoaderTask taskPropiedades = new DownLoaderTask(delegado);
         taskPropiedades.execute(url.toString());
+
+    }
+
+    public void RecibeLocalidadReferencia(String localidadReferencia)
+    {
+        IAsyncTaskDelegate delegado = new IAsyncTaskDelegate() {
+            @Override
+            public void onTaskComplete(JSONObject jsonObj) {
+                try {
+                    ejecutarLocalidadDetalle(jsonObj);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+        };
+
+        DownLoaderTask detaisTask = new DownLoaderTask(delegado);
+
+        String reference = localidadReferencia;
+
+        StringBuilder url = new StringBuilder(PLACES_API_BASE + TYPE_DETAILS + OUT_JSON);
+        url.append("?sensor=false&key=" + API_KEY);
+        url.append("&reference=" + reference);
+
+        detaisTask.execute(url.toString());
 
     }
 

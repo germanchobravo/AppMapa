@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!--<style name="AppTheme" parent="android:Theme.Holo.Light" >
+    <!--
+    <style name="AppTheme" parent="android:Theme.Holo.Light" >
         <item name="android:textColor">#ffffff</item>
-       <item name="android:textColor">#33b5e5</item>
+        <item name="android:textColor">#33b5e5</item>
     </style>-->
     <style name="AppTheme" parent="@android:style/Theme.Holo.Light" >
         <item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>
         <item name="android:actionMenuTextColor">@color/letra_menu_bottom</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListViewStyle</item>
+        <item name="android:textColor">#ffffff</item>
+
+    </style>
+
+
+    <style name="DropDownListViewStyle" >
+        <item name="android:divider">@color/red</item>
+        <item name="android:dividerHeight">1dp</item>
+        <item name="android:background">@color/blanco</item>
+
     </style>
 
     <style name="AppTheme.ActionBar"
@@ -15,16 +26,15 @@
         <item name="android:background">@color/actionbar_top</item>
         <item name="android:backgroundSplit" >@color/actionbar_bottom</item>
 
-    </style>
 
-    <style name="Theme.AppTheme.NoActionBar" parent="AppTheme">
-        <item name="android:windowActionBar">false</item>
-        <item name="android:windowTitleSize">0dp</item>
     </style>
 
     <style name="AppTheme.ActionBar.TitleTextStyle" parent="@android:style/TextAppearance">
         <item name="android:textColor">#ffffff</item>
     </style>
+    <style name="Theme.AppTheme.NoActionBar" parent="AppTheme">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowTitleSize">0dp</item>
+    </style>
 
-    <color name="letra_menu_bottom">#75bae3</color>
 </resources>

@@ -5,4 +5,8 @@
     <color name="blanco">#ffffff</color>
     <color name="actionbar_top">#3a9cd7</color>
     <color name="actionbar_bottom">#ffffff</color>
+    <color name="letra_menu_bottom">#75bae3</color>
+    <color name="press_button">#80CCEA</color>
+
+
 </resources>

@@ -25,10 +25,15 @@
     <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/imageButton"
+            android:id="@+id/action_btnFiltros"
             android:layout_marginTop="10dp"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" android:background="@drawable/ic_action_search"/>
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_action_search"
+            android:background="@drawable/tools_selector"
+            />
+
+    <!--android:background="@drawable/ic_action_search"-->
 
 
 </RelativeLayout>

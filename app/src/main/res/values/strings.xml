@@ -13,5 +13,8 @@
     <string name="lista">lista</string>
     <string name="guardar">guardar</string>
     <string name="info_local">info local</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="cancelar">cancelar</string>
+    <string name="Buscar_Direccion">Buscar dirección</string>
 
 </resources>
