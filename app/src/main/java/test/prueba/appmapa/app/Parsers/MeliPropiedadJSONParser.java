@@ -60,8 +60,32 @@ public class MeliPropiedadJSONParser {
 
         try {
 
-            propiedad.setId(jPropiedad.getString("id"));
+            propiedad.setPrecio((Number)jPropiedad.get("price"));
+
             propiedad.setTitle(jPropiedad.getString("title"));
+
+            //ATRIBUTOS TIPO PROPIEDAD Y OPERACION
+            JSONArray atributos = jPropiedad.getJSONArray("attributes");
+
+            for(int i=0; i<atributos.length();i++){
+                try {
+                    JSONObject atributo = (JSONObject) atributos.get(i);
+
+                    if(atributo.length() > 0) {
+                        if(atributo.getString("name").equals("Inmueble")) {
+                            propiedad.setTipoPropiedad(atributo.getString("value_name"));
+                        }else if(atributo.getString("name").equals("Operación"))
+                        {
+                            propiedad.setTipoOperacion(atributo.getString("value_name"));
+                        }
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            //GEOLOCALIZACION
             if(!jPropiedad.getJSONObject("location").get("latitude").equals("")
                     && !jPropiedad.getJSONObject("location").get("longitude").equals("")) {
                 propiedad.setLat((Double) jPropiedad.getJSONObject("location").get("latitude"));

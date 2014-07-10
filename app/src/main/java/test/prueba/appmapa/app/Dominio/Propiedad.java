@@ -3,6 +3,9 @@ package test.prueba.appmapa.app.Dominio;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+
 /**
  * Created by gbravo on 6/23/14.
  */
@@ -15,19 +18,55 @@ public class Propiedad {
     private Bitmap imagen;
     private String urlImagen;
     private Drawable drawableImagen;
+    private Number precio;
+    private String tipoPropiedad;
+    private String tipoOperacion;
 
     public String getTitle() {return title; }
     public String getId() { return id; }
     public Double getLat() {return this.lat; }
     public Double getLng() {return this.lng; }
     public Bitmap getImagen() {return this.imagen; }
-
     public String getUrlImagen() {
         return urlImagen;
     }
 
     public Drawable getDrawableImagen() {
         return drawableImagen;
+    }
+
+    public Number getPrecio() {
+        return precio;
+    }
+
+    public String getDescripcionPrecio()
+    {
+        DecimalFormatSymbols simbolo=new DecimalFormatSymbols();
+        simbolo.setGroupingSeparator('.');
+        DecimalFormat formateador = new DecimalFormat("###,###.##",simbolo);
+
+        return "$ " + formateador.format(this.precio);
+
+    }
+
+    public void setPrecio(Number precio) {
+        this.precio = precio;
+    }
+
+    public String getTipoPropiedad() {
+        return tipoPropiedad;
+    }
+
+    public void setTipoPropiedad(String tipoPropiedad) {
+        this.tipoPropiedad = tipoPropiedad;
+    }
+
+    public String getTipoOperacion() {
+        return tipoOperacion;
+    }
+
+    public void setTipoOperacion(String tipoOperacion) {
+        this.tipoOperacion = tipoOperacion;
     }
 
     public void setDrawableImagen(Drawable drawableImagen) {

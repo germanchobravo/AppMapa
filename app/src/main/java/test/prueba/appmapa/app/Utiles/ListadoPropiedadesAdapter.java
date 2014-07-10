@@ -52,8 +52,9 @@ public class ListadoPropiedadesAdapter extends ArrayAdapter<Propiedad> {
             row = inf.inflate(R.layout.fragment_list, null);
 
             holder = new ViewHolder();
-            holder.txtID = (TextView)row.findViewById(R.id.txtID);
+            holder.txtDescripcionTipoPropiedad = (TextView)row.findViewById(R.id.txtTipoPropiedad);
             holder.txtDireccion = (TextView)row.findViewById(R.id.txtDireccion);
+            holder.txtPrecio = (TextView)row.findViewById(R.id.txtPrecio);
             row.setTag(holder);
 
         }else
@@ -101,15 +102,19 @@ public class ListadoPropiedadesAdapter extends ArrayAdapter<Propiedad> {
         }
 
 
-        holder.txtID.setText(currentPropiedad.getId());
+        holder.txtDescripcionTipoPropiedad.setText(currentPropiedad.getTipoPropiedad()
+                + " en "
+                + currentPropiedad.getTipoOperacion().toLowerCase());
         holder.txtDireccion.setText(currentPropiedad.getTitle());
-
+        holder.txtPrecio.setText(currentPropiedad.getDescripcionPrecio());
         return row;
     }
 
     static class ViewHolder {
-        public TextView txtID;
+        public TextView txtDescripcionTipoPropiedad;
         public TextView txtDireccion;
+        public TextView txtPrecio;
+
     }
 
 }
