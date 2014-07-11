@@ -1,10 +1,13 @@
 package test.prueba.appmapa.app;
 
 import android.app.ListFragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.AbsListView;
+import org.json.JSONException;
 import org.json.JSONObject;
+import test.prueba.appmapa.app.Dominio.Paginacion;
 import test.prueba.appmapa.app.Dominio.Propiedad;
 import test.prueba.appmapa.app.Parsers.MeliPropiedadJSONParser;
 import test.prueba.appmapa.app.Utiles.DownLoader;
@@ -28,43 +31,91 @@ public class FragmentList extends ListFragment  implements AbsListView.OnScrollL
         //setRetainInstance(true);
 
     }
+    protected View footerView;
+
+    protected boolean loading = false;
+
+    protected Paginacion paginacion;
+
 
     private void listarPropiedades(JSONObject jsonObj) {
+        try{
+            paginacion.Total  = jsonObj.getJSONObject("paging").getInt("total");
+            paginacion.Offset = paginacion.getLimit();
+
+        }catch (JSONException e)
+        {
+
+        }
+
+
         ArrayList<Propiedad> propiedades = MeliPropiedadJSONParser.parse(jsonObj);
+
+        footerView = ((LayoutInflater) getActivity()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.progressbar_footerlist, null, false);
 
         this.setListAdapter(new ListadoPropiedadesAdapter(
                 getActivity(), R.layout.fragment_list, propiedades));
 
+        this.getListView().setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView arg0, int arg1) {
+                // nothing here
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (load(firstVisibleItem, visibleItemCount, totalItemCount)) {
+                    loading = true;
+                    getListView().addFooterView(footerView, null, false);
+
+                    IAsyncTaskDelegate delegado = new IAsyncTaskDelegate() {
+
+                        @Override
+                        public void onTaskComplete(JSONObject jsonObject) {
+
+                            paginacion.Offset += paginacion.getLimit();
+
+                            ArrayList<Propiedad> propiedades = MeliPropiedadJSONParser.parse(jsonObject);
+
+
+                            ListadoPropiedadesAdapter listadoPropiedadesAdapter = ((ListadoPropiedadesAdapter) getListAdapter());
+
+                            listadoPropiedadesAdapter.addAll(propiedades);
+
+                            listadoPropiedadesAdapter.notifyDataSetChanged();
+
+                            getListView().removeFooterView(footerView);
+                            loading = false;
+                        }
+
+                    };
+
+                    StringBuilder url = new StringBuilder(DownLoader.API_MELI_BASE);
+
+                    url.append("&limit=" + paginacion.getLimit());
+
+                    url.append("&offset=" + paginacion.Offset);
+
+                    DownLoaderTask taskPropiedades = new DownLoaderTask(delegado);
+                    taskPropiedades.execute(url.toString());
+                }
+            }
+        });
 
     }
+    protected boolean load(int firstVisibleItem, int visibleItemCount, int totalItemCount)
+    {
+        boolean lastItem = firstVisibleItem + visibleItemCount == totalItemCount && getListView().getChildAt(visibleItemCount -1) != null && getListView().getChildAt(visibleItemCount-1).getBottom() <= getListView().getHeight();
+        boolean moreRows = getListAdapter().getCount() < paginacion.Total;
+        return moreRows && lastItem && !loading;
 
+    }
     @Override
     public void onActivityCreated(Bundle savedState) {
         super.onActivityCreated(savedState);
-        /*
-        IAsyncTaskDelegate delegado = new IAsyncTaskDelegate() {
-            @Override
-            public void onTaskComplete(JSONObject jsonObject) {
-                listarPropiedades(jsonObject);
-            }
-        };
 
-        StringBuilder url = new StringBuilder(DownLoader.API_MELI_BASE);
-        DownLoaderTask taskPropiedades = new DownLoaderTask(delegado);
-        taskPropiedades.execute(url.toString());
-        */
-}
-
-  /*  @Override
-    public void onListItemClick(ListView l, View v, int pos, long id) {
-        mCurrIdx = pos;
-        getListView().setItemChecked(pos, true);
-        mListener.onListSelection(pos);
-    }*/
-
-    private void setData()
-    {
-        //this.setListAdapter(New );
     }
 
     @Override
@@ -79,9 +130,11 @@ public class FragmentList extends ListFragment  implements AbsListView.OnScrollL
 
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        paginacion = new Paginacion();
         IAsyncTaskDelegate delegado = new IAsyncTaskDelegate() {
 
             @Override
@@ -92,6 +145,10 @@ public class FragmentList extends ListFragment  implements AbsListView.OnScrollL
         };
 
         StringBuilder url = new StringBuilder(DownLoader.API_MELI_BASE);
+        url.append("&limit=" + paginacion.getLimit());
+        url.append("&offset=" + paginacion.Offset);
+
+
         DownLoaderTask taskPropiedades = new DownLoaderTask(delegado);
         taskPropiedades.execute(url.toString());
 
