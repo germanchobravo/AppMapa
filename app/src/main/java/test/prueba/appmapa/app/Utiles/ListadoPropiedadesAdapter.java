@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import test.prueba.appmapa.app.Dominio.Propiedad;
 import test.prueba.appmapa.app.R;
@@ -40,13 +41,13 @@ public class ListadoPropiedadesAdapter extends ArrayAdapter<Propiedad> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         View row = convertView;
 
         Propiedad currentPropiedad = (Propiedad) propiedades.get(position);
 
-        ViewHolder holder;
+        final ViewHolder holder;
         if(row == null)
         {
             row = inf.inflate(R.layout.fragment_list, null);
@@ -55,6 +56,7 @@ public class ListadoPropiedadesAdapter extends ArrayAdapter<Propiedad> {
             holder.txtDescripcionTipoPropiedad = (TextView)row.findViewById(R.id.txtTipoPropiedad);
             holder.txtDireccion = (TextView)row.findViewById(R.id.txtDireccion);
             holder.txtPrecio = (TextView)row.findViewById(R.id.txtPrecio);
+            holder.imgFavorito = (ImageButton)row.findViewById(R.id.imgFavorito);
             row.setTag(holder);
 
         }else
@@ -63,6 +65,28 @@ public class ListadoPropiedadesAdapter extends ArrayAdapter<Propiedad> {
             row.setBackground(null);
         }
 
+         holder.imgFavorito.setOnClickListener(new View.OnClickListener() {
+             private int pos = position;
+
+             @Override
+             public void onClick(View v) {
+                 Propiedad propiedad = propiedades.get(position);
+
+                 if(propiedad.Favorito)
+                 {
+                     propiedad.Favorito = false;
+                     v.setBackgroundResource(R.drawable.ic_favorito_vacio);
+
+                 }else
+                 {
+                     propiedad.Favorito = true;
+                     v.setBackgroundResource(R.drawable.ic_favorito_lleno);
+                 }
+
+
+
+             }
+         });
 
         String urlImagen = currentPropiedad.getUrlImagen();
 
@@ -107,6 +131,15 @@ public class ListadoPropiedadesAdapter extends ArrayAdapter<Propiedad> {
                 + currentPropiedad.getTipoOperacion().toLowerCase());
         holder.txtDireccion.setText(currentPropiedad.getTitle());
         holder.txtPrecio.setText(currentPropiedad.getDescripcionPrecio());
+
+        if(currentPropiedad.Favorito != null && currentPropiedad.Favorito) {
+            holder.imgFavorito.setBackgroundResource(R.drawable.ic_favorito_lleno);
+        }else
+        {
+            currentPropiedad.Favorito = false;
+            holder.imgFavorito.setBackgroundResource(R.drawable.ic_favorito_vacio);
+        }
+
         return row;
     }
 
@@ -114,7 +147,7 @@ public class ListadoPropiedadesAdapter extends ArrayAdapter<Propiedad> {
         public TextView txtDescripcionTipoPropiedad;
         public TextView txtDireccion;
         public TextView txtPrecio;
-
+        public ImageButton imgFavorito;
     }
 
 }

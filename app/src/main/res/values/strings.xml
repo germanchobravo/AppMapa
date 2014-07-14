@@ -9,10 +9,11 @@
     <string name="Direccion">Direccion</string>
     <string name="ubicacion_actual">Ubicación actual</string>
     <string name="listado">listado</string>
-    <string name="guardar_busqueda">guardar busqueda</string>
-    <string name="lista">lista</string>
+    <string name="guardar_busqueda">Guardar búsqueda</string>
+    <string name="lista">Lista</string>
+    <string name="Mapa">Mapa</string>
     <string name="guardar">guardar</string>
-    <string name="info_local">info local</string>
+    <string name="info_local">Info. local</string>
     <string name="aceptar">Aceptar</string>
     <string name="cancelar">cancelar</string>
     <string name="Buscar_Direccion">Buscar dirección</string>

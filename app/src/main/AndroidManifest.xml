@@ -53,6 +53,7 @@
             android:noHistory="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppTheme.NoActionBar"
+
             >
             <!--android:theme="@android:style/Theme.Black.NoTitleBar"-->
             <intent-filter>
@@ -65,7 +66,7 @@
                 android:name=".MainActivity"
                 android:label="@string/app_name"
                 android:uiOptions="splitActionBarWhenNarrow"
-                android:allowTaskReparenting="true"
+                android:screenOrientation="portrait"
                 >
             <intent-filter>
                 <action android:name="test.prueba.appmapa.app.MainActivity" />

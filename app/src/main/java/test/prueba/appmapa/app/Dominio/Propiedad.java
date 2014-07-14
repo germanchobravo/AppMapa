@@ -22,6 +22,9 @@ public class Propiedad {
     private String tipoPropiedad;
     private String tipoOperacion;
 
+
+    public Boolean Favorito;
+
     public String getTitle() {return title; }
     public String getId() { return id; }
     public Double getLat() {return this.lat; }
