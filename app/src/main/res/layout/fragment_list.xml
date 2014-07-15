@@ -5,71 +5,118 @@
         android:layout_height="match_parent"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:gravity="bottom"
-        android:minHeight="220dp"
-        android:layout_marginBottom="100dp"
+        android:minHeight="225dp"
+
+
         >
     <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/gradient_image"
-            android:baselineAligned="false"
-            android:weightSum="1"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
+            android:orientation="vertical"
 
             >
-        <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="40dp"
-                android:layout_weight=".7"
-                android:baselineAligned="false"
-                >
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/txtTipoPropiedad"
-                    android:text="Tipo"
-                    android:textSize="10dp"
-                    android:textColor="#ffffffff"
-                    />
-            <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/txtDireccion"
-                    android:text="Direccion"
-                    android:layout_alignParentStart="true"
-                    android:textSize="10dp"
-                    android:textColor="#ffffffff"
-                    android:singleLine="false"
-                    />
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/txtPrecio"
-                    android:text="Precio"
-                    android:textStyle="bold"
-                    android:textSize="15dp"
-                    android:textColor="#ffffffff"
 
-                    />
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="15dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:weightSum="1"
+                >
+
+            <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5">
+                <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/ic_carruselfoto_izq" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5"
+                    android:gravity="right">
+                    <ImageButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/ic_carruselfoto_der"
+                            />
+
+            </LinearLayout>
         </LinearLayout>
         <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight=".3"
+                android:background="@drawable/gradient_image"
                 android:baselineAligned="false"
-                android:gravity="center_horizontal"
+                android:weightSum="1"
+                android:paddingBottom="23dp"
+                android:paddingTop="5.5dp"
                 >
-            <ImageButton
+
+            <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/imgFavorito"
-                    android:background="@drawable/ic_action_search"
-                    />
+                    android:paddingLeft="25dp"
+                    android:layout_weight=".7"
+                    android:baselineAligned="false"
+                    >
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/txtTipoPropiedad"
+                        android:text="Tipo"
+                        android:textSize="10dp"
+                        android:textColor="#ffffffff"
+                        android:textStyle="bold"
+                        />
+                <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/txtDireccion"
+                        android:text="Direccion"
+                        android:layout_alignParentStart="true"
+                        android:textSize="10dp"
+                        android:textColor="#ffffffff"
+                        android:textStyle="bold"
+                        android:singleLine="false"
+                        />
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/txtPrecio"
+                        android:text="Precio"
+                        android:textStyle="bold"
+                        android:textSize="27.5dp"
+                        android:textColor="#ffffffff"
+
+                        />
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".3"
+                    android:baselineAligned="false"
+                    android:gravity="right"
+                    android:paddingRight="20dp"
+                    android:paddingTop="6.5dp"
+                    >
+                <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/imgFavorito"
+                        android:background="@drawable/ic_favorito_vacio"
+                        />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 

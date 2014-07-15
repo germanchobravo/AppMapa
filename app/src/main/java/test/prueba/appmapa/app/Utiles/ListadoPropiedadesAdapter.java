@@ -72,14 +72,14 @@ public class ListadoPropiedadesAdapter extends ArrayAdapter<Propiedad> {
              public void onClick(View v) {
                  Propiedad propiedad = propiedades.get(position);
 
-                 if(propiedad.Favorito)
+                 if(propiedad.getFavorito())
                  {
-                     propiedad.Favorito = false;
+                     propiedad.setFavorito(false);
                      v.setBackgroundResource(R.drawable.ic_favorito_vacio);
 
                  }else
                  {
-                     propiedad.Favorito = true;
+                     propiedad.setFavorito(true);
                      v.setBackgroundResource(R.drawable.ic_favorito_lleno);
                  }
 
@@ -132,11 +132,11 @@ public class ListadoPropiedadesAdapter extends ArrayAdapter<Propiedad> {
         holder.txtDireccion.setText(currentPropiedad.getTitle());
         holder.txtPrecio.setText(currentPropiedad.getDescripcionPrecio());
 
-        if(currentPropiedad.Favorito != null && currentPropiedad.Favorito) {
+        if(currentPropiedad.getFavorito() != null && currentPropiedad.getFavorito()) {
             holder.imgFavorito.setBackgroundResource(R.drawable.ic_favorito_lleno);
         }else
         {
-            currentPropiedad.Favorito = false;
+            currentPropiedad.setFavorito(false);
             holder.imgFavorito.setBackgroundResource(R.drawable.ic_favorito_vacio);
         }
 

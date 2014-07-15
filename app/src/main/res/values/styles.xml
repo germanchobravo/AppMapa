@@ -5,14 +5,21 @@
         <item name="android:textColor">#ffffff</item>
         <item name="android:textColor">#33b5e5</item>
     </style>-->
+
     <style name="AppTheme" parent="@android:style/Theme.Holo.Light" >
         <item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>
         <item name="android:actionMenuTextColor">@color/letra_menu_bottom</item>
-
+        
         <item name="android:dropDownListViewStyle">@style/DropDownListViewStyle</item>
         <item name="android:textColor">#ffffff</item>
 
     </style>
+
+    <style name="Theme.AppTheme.NoActionBar" parent="AppTheme">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowTitleSize">0dp</item>
+    </style>
+
 
 
     <style name="DropDownListViewStyle" >
@@ -24,19 +31,22 @@
 
     <style name="AppTheme.ActionBar"
            parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:titleTextStyle">@style/TitleTextStyle</item>
+
         <item name="android:background">@color/actionbar_top</item>
         <item name="android:backgroundSplit" >@color/actionbar_bottom</item>
-        <item name="android:titleTextStyle">@style/AppTheme.ActionBar.TitleTextStyle</item>
+
 
 
     </style>
 
-    <style name="AppTheme.ActionBar.TitleTextStyle" parent="@android:style/Widget.TextView">
-        <item name="android:textSize">4sp</item>
+
+    <!-- ActionBar title text -->
+    <style name="TitleTextStyle"
+           parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textSize">4px</item>
     </style>
-    <style name="Theme.AppTheme.NoActionBar" parent="AppTheme">
-        <item name="android:windowActionBar">false</item>
-        <item name="android:windowTitleSize">0dp</item>
-    </style>
+
+
 
 </resources>

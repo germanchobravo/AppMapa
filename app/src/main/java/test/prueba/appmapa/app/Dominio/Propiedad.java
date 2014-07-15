@@ -21,9 +21,7 @@ public class Propiedad {
     private Number precio;
     private String tipoPropiedad;
     private String tipoOperacion;
-
-
-    public Boolean Favorito;
+    private Boolean favorito;
 
     public String getTitle() {return title; }
     public String getId() { return id; }
@@ -55,6 +53,10 @@ public class Propiedad {
     public void setPrecio(Number precio) {
         this.precio = precio;
     }
+
+    public Boolean getFavorito() { return favorito; }
+
+    public void setFavorito(Boolean favorito) { this.favorito = favorito; }
 
     public String getTipoPropiedad() {
         return tipoPropiedad;

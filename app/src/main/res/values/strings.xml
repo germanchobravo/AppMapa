@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">AppMapa</string>
+    <string name="app_name">Portal móvil</string>
     <string name="hello_world">Hello world!</string>
     <string name="filtros">filtros</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -13,7 +13,7 @@
     <string name="lista">Lista</string>
     <string name="Mapa">Mapa</string>
     <string name="guardar">guardar</string>
-    <string name="info_local">Info. local</string>
+    <string name="info_local">Info.</string>
     <string name="aceptar">Aceptar</string>
     <string name="cancelar">cancelar</string>
     <string name="Buscar_Direccion">Buscar dirección</string>
