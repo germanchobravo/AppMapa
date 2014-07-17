@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:paddingRight="20dp"
         android:paddingTop="13dp"
+
         >
-    <ImageButton
+    <!--<ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btnMenu"
             android:background="@drawable/ic_menulateral"
             />
-
+    -->
     <TextView
             android:id="@+id/apptitle"
             android:layout_width="wrap_content"
@@ -20,7 +21,8 @@
             android:text="Current Location"
             android:textSize="15dp"
             android:textColor="@color/blanco"
-            android:layout_centerHorizontal="true"
+            android:textStyle="bold"
+            android:layout_alignParentLeft="true"
             />
     <ImageButton
             android:layout_width="wrap_content"
@@ -31,8 +33,5 @@
             android:src="@drawable/ic_busqueda"
             android:background="@drawable/tools_selector"
             />
-
-    <!--android:background="@drawable/ic_action_search"-->
-
 
 </RelativeLayout>

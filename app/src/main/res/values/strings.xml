@@ -13,9 +13,11 @@
     <string name="lista">Lista</string>
     <string name="Mapa">Mapa</string>
     <string name="guardar">guardar</string>
-    <string name="info_local">Info.</string>
+    <string name="info_local">Info. local</string>
     <string name="aceptar">Aceptar</string>
     <string name="cancelar">cancelar</string>
     <string name="Buscar_Direccion">Buscar dirección</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
 
 </resources>
