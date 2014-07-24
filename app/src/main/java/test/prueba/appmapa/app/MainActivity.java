@@ -15,7 +15,17 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
+import org.json.JSONException;
+import org.json.JSONObject;
 import test.prueba.appmapa.app.Dominio.Filtros;
+import test.prueba.appmapa.app.Dominio.Paginacion;
+import test.prueba.appmapa.app.Dominio.Propiedad;
+import test.prueba.appmapa.app.Parsers.MeliPropiedadJSONParser;
+import test.prueba.appmapa.app.Utiles.DownLoader;
+import test.prueba.appmapa.app.task.DownLoaderTask;
+import test.prueba.appmapa.app.task.IAsyncTaskDelegate;
+
+import java.util.ArrayList;
 
 public class MainActivity extends Activity {
 
@@ -49,6 +59,7 @@ public class MainActivity extends Activity {
         // Pass any configuration change to the drawer toggls
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,14 +114,6 @@ public class MainActivity extends Activity {
                 null);
         actionBar.setCustomView(view);
 
-        fragmentMap = new FragmentMap();
-        fragmentList = new FragmentList();
-
-        android.app.FragmentManager fm = getFragmentManager();
-        fm.beginTransaction()
-                .replace(R.id.mainContainer, fragmentMap)
-                .commit();
-
         ImageButton btnFiltros = (ImageButton) findViewById(R.id.action_btnFiltros);
 
 
@@ -127,6 +130,52 @@ public class MainActivity extends Activity {
         });
 
 
+        fragmentMap = new FragmentMap();
+        fragmentList = new FragmentList();
+
+        android.app.FragmentManager fm = getFragmentManager();
+        fm.beginTransaction()
+                .add(R.id.mainContainer, fragmentMap)
+                .add(R.id.mainContainer, fragmentList)
+                .hide(fragmentList)
+                .commit();
+
+
+    }
+
+    protected Paginacion paginacion;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        paginacion = new Paginacion();
+        IAsyncTaskDelegate delegado = new IAsyncTaskDelegate() {
+
+            @Override
+            public void onTaskComplete(JSONObject jsonObject) {
+
+                try
+                {
+                    paginacion.Total  = jsonObject.getJSONObject("paging").getInt("total");
+                    paginacion.Offset = paginacion.getLimit();
+
+                } catch (JSONException ex)
+                {
+
+                }
+
+
+                ArrayList<Propiedad> propiedades = MeliPropiedadJSONParser.parse(jsonObject);
+                fragmentMap.onCallBackPropiedades(propiedades);
+            }
+
+        };
+
+        StringBuilder url = new StringBuilder(DownLoader.API_MELI_BASE);
+
+        DownLoaderTask taskPropiedades = new DownLoaderTask(delegado);
+        taskPropiedades.execute(url.toString());
 
     }
 
@@ -203,16 +252,16 @@ public class MainActivity extends Activity {
                 if(fragmentList.isVisible())
                 {
                     fm.beginTransaction()
-                            .remove(fragmentList)
-                            .replace(R.id.mainContainer, fragmentMap)
+                            .hide(fragmentList)
+                            .show(fragmentMap)
                             .commit();
 
                     item.setTitle("Lista");
                 }else
                 {
                     fm.beginTransaction()
-                            .remove(fragmentMap)
-                            .replace(R.id.mainContainer, fragmentList)
+                            .hide(fragmentMap)
+                            .show(fragmentList)
                             .commit();
 
                     item.setTitle("Mapa");

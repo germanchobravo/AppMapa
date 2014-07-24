@@ -19,5 +19,10 @@
     <string name="Buscar_Direccion">Buscar dirección</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+    <string name="Venta">Venta</string>
+    <string name="Arriendo">Arriendo</string>
+    <string name="Arriendo_temporada">Arriendo temporada</string>
+    <string name="Aplicar">Aplicar</string>
+    <string name="Cancelar">Cancelar</string>
 
 </resources>

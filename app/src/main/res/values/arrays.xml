@@ -4,4 +4,15 @@
         <item>Menu 1</item>
         <item>Menu 2</item>
     </string-array>
+
+    <string-array name="tipoPropiedades_array">
+        <item>Todos</item>
+        <item>Casa</item>
+        <item>Departamento</item>
+        <item>Oficina</item>
+        <item>Sitio</item>
+        <item>Comercial</item>
+        <item>Industrial</item>
+        <item>Agrícola</item>
+    </string-array>
 </resources>

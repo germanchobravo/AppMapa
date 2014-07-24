@@ -2,9 +2,12 @@ package test.prueba.appmapa.app.Activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +17,7 @@ import android.widget.*;
 import org.json.JSONObject;
 import test.prueba.appmapa.app.Dominio.Filtros;
 import test.prueba.appmapa.app.Dominio.Localidad;
+import test.prueba.appmapa.app.Fragments.DialogTipoPropiedades;
 import test.prueba.appmapa.app.Parsers.LocalidadJSONParser;
 import test.prueba.appmapa.app.R;
 import test.prueba.appmapa.app.Utiles.DownLoader;
@@ -25,7 +29,7 @@ import java.util.ArrayList;
 /**
  * Created by gbravo on 7/7/14.
  */
-public class FiltrosActivity extends Activity implements AdapterView.OnItemClickListener {
+public class FiltrosActivity extends Activity implements DialogTipoPropiedades.OnPropiedadesSeleccionada, AdapterView.OnItemClickListener {
 
     private static final String LOG_TAG = "ExampleApp";
 
@@ -39,6 +43,9 @@ public class FiltrosActivity extends Activity implements AdapterView.OnItemClick
 
     private static final String API_KEY = "AIzaSyBuWERTOvSMXXiUggUVh6ZRMJ3jQghBybc";
     Filtros filtros;
+    TextView txtTipoPropiedades;
+    FragmentTransaction ft;
+    DialogFragment dialogTipoPropiedades;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +71,93 @@ public class FiltrosActivity extends Activity implements AdapterView.OnItemClick
         Intent intent = getIntent();
         filtros = (Filtros) intent.getSerializableExtra("filtros");
 
+        TabHost th = (TabHost) findViewById (R.id.tabHost);
+        th.setup();
+        TabHost.TabSpec specs = th.newTabSpec("tag1");
+        specs.setContent(R.id.tab1);
+        specs.setIndicator("Venta");
+        th.addTab(specs);
+        specs = th.newTabSpec("tag2");
+        specs.setContent(R.id.tab2);
+        specs.setIndicator("arriendo");
+        th.addTab(specs);
+        specs = th.newTabSpec("tag3");
+        specs.setContent(R.id.tab3);
+        specs.setIndicator("Arriendo temporada");
+        th.addTab(specs);
+
+
+        final FrameLayout frameVenta = (FrameLayout)findViewById(R.id.btnOperacionVenta);
+        final FrameLayout frameArriendo = (FrameLayout)findViewById(R.id.btnOperacionArriendo);
+        final FrameLayout frameArriendotemporada = (FrameLayout)findViewById(R.id.btnOperacionArriendoTemporada);
+
+        frameVenta.setSelected(true);
+
+        frameVenta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                frameVenta.setSelected(true);
+                frameArriendo.setSelected(false);
+                frameArriendotemporada.setSelected(false);
+            }
+        });
+
+        frameArriendo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                frameVenta.setSelected(false);
+                frameArriendo.setSelected(true);
+                frameArriendotemporada.setSelected(false);
+            }
+        });
+
+        frameArriendotemporada.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                frameVenta.setSelected(false);
+                frameArriendo.setSelected(false);
+                frameArriendotemporada.setSelected(true);
+            }
+        });
+
+        LinearLayout tipoPropiedad = (LinearLayout)findViewById(R.id.cmbTipoPropiedad);
+
+        txtTipoPropiedades = (TextView)findViewById(R.id.txtTipoPropiedades);
+
+
+        tipoPropiedad.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                Bundle arguments = new Bundle();
+                arguments.putSerializable("filtros", filtros);
+
+                DialogTipoPropiedades dialogTipoPropiedades = DialogTipoPropiedades.newInstance(arguments);
+                ft = getFragmentManager().beginTransaction();
+                dialogTipoPropiedades.show(ft, "dialog");
+            }
+        });
+
     }
+
+
+
+   /* public void funcOnClickOperaciones(View view)
+    {
+        switch (view.getId()) {
+            case R.id.btnOperacionVenta:
+                view.setSelected(true);
+                break;
+            case R.id.btnOperacionArriendo:
+                view.setSelected(true);
+                break;
+            case R.id.btnOperacionArriendoTemporada:
+                view.setSelected(true);
+                break;
+        }
+    }*/
+
 
     private ArrayList<Localidad> autocomplete(String input) {
         ArrayList<Localidad> resultList = null;
@@ -121,6 +214,19 @@ public class FiltrosActivity extends Activity implements AdapterView.OnItemClick
         */
 
     }
+
+    @Override
+    public void onPropiedadesSeleccionada(String[] arrayString) {
+
+
+        txtTipoPropiedades.setText(TextUtils.join(", ", arrayString));
+
+        filtros.setTiposPropiedad(arrayString);
+
+
+
+    }
+
 
     private class PlacesAutoCompleteAdapter extends ArrayAdapter<Localidad> implements Filterable {
         private ArrayList<Localidad> resultList;

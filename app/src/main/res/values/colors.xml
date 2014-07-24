@@ -7,6 +7,9 @@
     <color name="actionbar_bottom">#ffffff</color>
     <color name="letra_menu_bottom">#75bae3</color>
     <color name="press_button">#80CCEA</color>
+    <color name="negro">#000</color>
+    <color name="titulo_filtros">#3a9cd7</color>
+    <color name="texto_gris_filtros">#666666</color>
 
 
 </resources>

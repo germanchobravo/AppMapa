@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+
+   <!-- <LinearLayout android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical"
+                  android:padding="10dp"
+            >
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Seleccione tipo de propiedad"
+                android:layout_gravity="center"
+                />
+    </LinearLayout>-->
+
+
+        <ListView
+                android:id="@+id/listTipoPropiedad"
+                android:layout_width="fill_parent"
+                android:layout_height="470dp"
+                />
+
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_alignParentBottom="true"
+            android:padding="0dp"
+            >
+        <Button
+                android:id="@+id/btnCancelar"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Cancelar"
+                android:layout_weight=".5"/>
+        <Button
+                android:id="@+id/btnAplicar"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight=".5"
+                android:text="@string/Aplicar" />
+    </LinearLayout>
+
+
+
+</RelativeLayout>

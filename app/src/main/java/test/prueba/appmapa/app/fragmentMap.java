@@ -1,7 +1,6 @@
 package test.prueba.appmapa.app;
 
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
@@ -28,6 +27,7 @@ import test.prueba.appmapa.app.Parsers.MeliPropiedadJSONParser;
 import test.prueba.appmapa.app.Utiles.DownLoader;
 import test.prueba.appmapa.app.task.DownLoaderTask;
 import test.prueba.appmapa.app.task.IAsyncTaskDelegate;
+import test.prueba.appmapa.app.task.ICallBackListPropiedades;
 
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
@@ -37,7 +37,9 @@ import java.util.List;
 /**
  * Created by gbravo on 6/29/14.
  */
-public class FragmentMap extends Fragment implements OnItemClickListener {
+public class FragmentMap extends Fragment implements OnItemClickListener, ICallBackListPropiedades {
+
+
 
     private GoogleMap map;
     private MarkerOptions markerOptions;
@@ -123,7 +125,9 @@ public class FragmentMap extends Fragment implements OnItemClickListener {
 
     }
 
-    @Override
+
+
+  /*  @Override
     public void onResume() {
         super.onResume();
 
@@ -136,7 +140,7 @@ public class FragmentMap extends Fragment implements OnItemClickListener {
         {
             RecibeLocalidadReferencia(filtros.getLocalidadReferencia());
         }
-    }
+    }*/
 
 
 
@@ -145,12 +149,16 @@ public class FragmentMap extends Fragment implements OnItemClickListener {
 
         View view = inflater.inflate(R.layout.fragment_mapa, container, false);
 
-        mapaFragment = MapFragment.newInstance();
+        map = ((MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment)).getMap();
 
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.add(R.id.map_container, mapaFragment).commit();
+        getCurrentLocationTask = new CurrentLocationTask();
+        getCurrentLocationTask.execute();
 
-        //map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        if(filtros != null)
+        {
+            RecibeLocalidadReferencia(filtros.getLocalidadReferencia());
+        }
+
         //map.setMyLocationEnabled(true);
 
 
@@ -161,6 +169,8 @@ public class FragmentMap extends Fragment implements OnItemClickListener {
         autoCompView.setOnItemClickListener(this);*/
 
         return view;
+
+
 
     }
 
@@ -189,6 +199,21 @@ public class FragmentMap extends Fragment implements OnItemClickListener {
     }
 
 
+    private void PintarPropiedades(List<Propiedad> propiedades) {
+
+
+        for(int i=0; i<propiedades.size();i++){
+
+            if(propiedades.get(i).getLat() != null && propiedades.get(i).getLng() != null) {
+                latLng = new LatLng(propiedades.get(i).getLat(), propiedades.get(i).getLng());
+                markerOptions = new MarkerOptions();
+                markerOptions.position(latLng);
+                markerOptions.title(propiedades.get(i).getTitle());
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_propiedades));
+                map.addMarker(markerOptions);
+            }
+        }
+    }
 
     private void pintarPropiedades(JSONObject jsonObj) {
         ArrayList<Propiedad> propiedades = MeliPropiedadJSONParser.parse(jsonObj);
@@ -293,6 +318,16 @@ public class FragmentMap extends Fragment implements OnItemClickListener {
         url.append("&reference=" + reference);
 
         detaisTask.execute(url.toString());
+
+    }
+
+    @Override
+    public void onCallBackPropiedades(List<Propiedad> propiedades) {
+
+        if(propiedades.size() > 0)
+        {
+            PintarPropiedades(propiedades);
+        }
 
     }
 
