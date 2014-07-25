@@ -139,6 +139,43 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
             }
         });
 
+        RadioGroup groupDormitorios = (RadioGroup)findViewById(R.id.groupDormitorios);
+        groupDormitorios.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if(checkedId == R.id.optDorm0)
+                {
+                    filtros.setDormitorios(0);
+                }else
+                {
+                    RadioButton rbDorm = (RadioButton)findViewById(checkedId);
+                    String texto =  rbDorm.getText().subSequence(0, 1).toString();
+                    Integer valor =  Integer.parseInt(texto);
+                    filtros.setDormitorios(valor);
+
+                }
+            }
+        });
+
+
+        RadioGroup groupBanos = (RadioGroup)findViewById(R.id.groupBanos);
+        groupBanos.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if(checkedId == R.id.optBano0)
+                {
+                    filtros.setBanos(0);
+                }else
+                {
+                    RadioButton rbBanos = (RadioButton)findViewById(checkedId);
+                    String texto =  rbBanos.getText().subSequence(0, 1).toString();
+                    Integer valor =  Integer.parseInt(texto);
+                    filtros.setBanos(valor);
+
+                }
+            }
+        });
+
     }
 
 

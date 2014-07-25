@@ -24,5 +24,8 @@
     <string name="Arriendo_temporada">Arriendo temporada</string>
     <string name="Aplicar">Aplicar</string>
     <string name="Cancelar">Cancelar</string>
+    <string name="Tipo_de_propiedad">Tipo de propiedades</string>
+    <string name="Dormitorios">Dormitorios</string>
+    <string name="Banos">Baños</string>
 
 </resources>

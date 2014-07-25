@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <color name="normal">#b0b0b0</color>
+    <color name="light">#ffffff</color>
     <color name="red">#FFFF0000</color>
     <color name="blanco">#ffffff</color>
     <color name="actionbar_top">#3a9cd7</color>
@@ -10,6 +12,14 @@
     <color name="negro">#000</color>
     <color name="titulo_filtros">#3a9cd7</color>
     <color name="texto_gris_filtros">#666666</color>
+    <color name="highlight">#FF38c0f4</color>
+
+    <!-- Background Drawable Colors -->
+    <color name="holo_pressed">#8000B6E6</color>
+    <color name="holo_focused">#4000B6E6</color>
+    <color name="holo_checked">#019DDA</color>
+
+    <color name="bordeTabla">#3a9cd7</color>
 
 
 </resources>

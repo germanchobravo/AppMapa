@@ -7,7 +7,6 @@
     </style>-->
 
 
-
     <style name="AppTheme" parent="@android:style/Theme.Holo.Light" >
         <item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>
         <item name="android:actionMenuTextColor">@color/letra_menu_bottom</item>
@@ -17,6 +16,7 @@
 
         <item name="android:actionMenuTextAppearance">@style/ActionBarBottom</item>
 
+        <item name="segmentedControlButtonStyle">@style/Widget.Holo.SegmentedControl</item>
 
 
         <!--<item name="android:tabWidgetStyle">@style/CustomTabWidget</item>-->
@@ -80,7 +80,7 @@
         <item name="android:windowTitleStyle">@style/MyOwnDialogTitle</item>
 
 
-       <!-- Este codigo es para dejar
+       <!-- Este codigo es para dejar en Full Screen DialogFragment
 
        <item name="android:windowFrame">@null</item>
         <item name="android:windowBackground">@color/blanco</item>
