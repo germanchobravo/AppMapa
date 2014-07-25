@@ -12,118 +12,41 @@
                 >
 
             <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginBottom="15dp"
-                    >
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="15dp"
+                >
 
-
-                <TabHost
+                <RadioGroup
+                        android:id="@+id/groupTipoOperaciones"
                         android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:id="@+id/tabHost"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        style="@style/AppTheme.TabWidget"
+                        android:divider="@drawable/radio_group_divider"
+                        android:showDividers="middle"
+                        android:background="@drawable/bordes_tabla"
                         >
-                    <LinearLayout
-                            android:layout_width="fill_parent"
-                            android:layout_height="fill_parent"
-                            android:orientation="vertical">
-                        <TabWidget
-                                android:id="@android:id/tabs"
-                                android:layout_width="fill_parent"
-                                android:layout_height="wrap_content">
-                        </TabWidget>
-                        <FrameLayout
-                                android:id="@android:id/tabcontent"
-                                android:layout_width="fill_parent"
-                                android:layout_height="fill_parent">
-                            <LinearLayout
-                                    android:id="@+id/tab1"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="fill_parent"
-                                    >
-                            </LinearLayout>
-                            <LinearLayout
-                                    android:id="@+id/tab2"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="fill_parent"
-                                    >
-                            </LinearLayout>
-                            <LinearLayout
-                                    android:id="@+id/tab3"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="fill_parent"
-                                    >
-                            </LinearLayout>
-                        </FrameLayout>
-                    </LinearLayout>
-                </TabHost>
-            </LinearLayout>
 
-            <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:weightSum="1"
-                    android:padding="0dp"
-                    android:layout_marginBottom="15dp"
-                    android:background="@drawable/bordes_tabla"
-                    style="@style/AppTheme.TabWidget"
-                    >
-                    <FrameLayout
-                            android:id="@+id/btnOperacionVenta"
-                            android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
+                    <test.prueba.appmapa.app.Controles.TabControlButton
+                            android:id="@+id/optVenta"
+                            android:text="@string/Venta"
                             android:layout_weight=".3"
-                            android:background="@drawable/button_selector"
-                            >
-                            <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:gravity="center"
-                                    android:layout_centerInParent="true"
-                                    android:textColor="@drawable/text_selector"
-                                    android:text="@string/Venta"
-                                    />
-                    </FrameLayout>
-                    <FrameLayout
-                            android:id="@+id/btnOperacionArriendo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
-                            android:layout_weight=".3"
-                            android:background="@drawable/button_selector"
+                            android:checked="true" />
 
-                            >
-                        <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:gravity="center"
-                                android:layout_centerInParent="true"
-                                android:text="@string/Arriendo"
-                                android:textColor="@drawable/text_selector"
-                                />
-                    </FrameLayout>
-                    <FrameLayout
-                            android:id="@+id/btnOperacionArriendoTemporada"
-                            android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
-                            android:layout_weight=".4"
-                            android:background="@drawable/button_selector"
+                    <test.prueba.appmapa.app.Controles.TabControlButton
+                            android:id="@+id/optArriendo"
+                            android:text="@string/Arriendo"
+                            android:layout_weight=".3"/>
 
-                            >
-                        <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:gravity="center"
-                                android:layout_centerInParent="true"
-                                android:textColor="@drawable/text_selector"
-                                android:text="@string/Arriendo_temporada"
+                    <test.prueba.appmapa.app.Controles.TabControlButton
+                            android:id="@+id/optArriendoTemp"
+                            android:text="@string/Arriendo_temporada"
+                            android:layout_weight=".4"/>
+                </RadioGroup>
 
-                                />
-                    </FrameLayout>
+
             </LinearLayout>
 
             <LinearLayout
@@ -159,7 +82,7 @@
                                 android:layout_gravity="center"
                                 android:layout_weight=".9"
                                 android:singleLine="true"
-                                android:background="@drawable/button_selector"
+                                android:textSize="14dp"
                                 />
                     <LinearLayout
                             android:layout_width="wrap_content"

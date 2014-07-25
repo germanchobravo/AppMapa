@@ -71,52 +71,22 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
         Intent intent = getIntent();
         filtros = (Filtros) intent.getSerializableExtra("filtros");
 
-        TabHost th = (TabHost) findViewById (R.id.tabHost);
-        th.setup();
-        TabHost.TabSpec specs = th.newTabSpec("tag1");
-        specs.setContent(R.id.tab1);
-        specs.setIndicator("Venta");
-        th.addTab(specs);
-        specs = th.newTabSpec("tag2");
-        specs.setContent(R.id.tab2);
-        specs.setIndicator("arriendo");
-        th.addTab(specs);
-        specs = th.newTabSpec("tag3");
-        specs.setContent(R.id.tab3);
-        specs.setIndicator("Arriendo temporada");
-        th.addTab(specs);
-
-
-        final FrameLayout frameVenta = (FrameLayout)findViewById(R.id.btnOperacionVenta);
-        final FrameLayout frameArriendo = (FrameLayout)findViewById(R.id.btnOperacionArriendo);
-        final FrameLayout frameArriendotemporada = (FrameLayout)findViewById(R.id.btnOperacionArriendoTemporada);
-
-        frameVenta.setSelected(true);
-
-        frameVenta.setOnClickListener(new View.OnClickListener() {
+        RadioGroup groupTipoOperacion = (RadioGroup)findViewById(R.id.groupTipoOperaciones);
+        groupTipoOperacion.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                frameVenta.setSelected(true);
-                frameArriendo.setSelected(false);
-                frameArriendotemporada.setSelected(false);
-            }
-        });
-
-        frameArriendo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                frameVenta.setSelected(false);
-                frameArriendo.setSelected(true);
-                frameArriendotemporada.setSelected(false);
-            }
-        });
-
-        frameArriendotemporada.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                frameVenta.setSelected(false);
-                frameArriendo.setSelected(false);
-                frameArriendotemporada.setSelected(true);
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId)
+                {
+                    case R.id.optArriendo:
+                        filtros.setTipoOperacion(1);
+                        break;
+                    case R.id.optVenta:
+                        filtros.setTipoOperacion(2);
+                        break;
+                    case R.id.optArriendoTemp:
+                        filtros.setTipoOperacion(3);
+                        break;
+                }
             }
         });
 

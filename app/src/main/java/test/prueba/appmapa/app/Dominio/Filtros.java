@@ -15,6 +15,12 @@ public class Filtros implements Serializable {
         this.localidadReferencia = localidadReferencia;
     }
 
+    private Integer tipoOperacion;
+
+    public Integer getTipoOperacion() { return tipoOperacion; }
+
+    public void setTipoOperacion(Integer tipoOperacion) { this.tipoOperacion = tipoOperacion; }
+
     private String[] tiposPropiedad;
     public String[] getTiposPropiedad() { return tiposPropiedad; }
     public void setTiposPropiedad(String[] tiposPropiedad) { this.tiposPropiedad = tiposPropiedad; }

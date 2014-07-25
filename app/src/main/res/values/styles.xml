@@ -17,7 +17,7 @@
         <item name="android:actionMenuTextAppearance">@style/ActionBarBottom</item>
 
         <item name="segmentedControlButtonStyle">@style/Widget.Holo.SegmentedControl</item>
-
+        <item name="tabControlButtonStyle">@style/Widget.Holo.TabControl</item>
 
         <!--<item name="android:tabWidgetStyle">@style/CustomTabWidget</item>-->
 

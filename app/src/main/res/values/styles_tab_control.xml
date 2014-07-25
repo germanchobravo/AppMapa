@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Widget.Holo.TabControl" parent="Widget.Holo.SegmentedControl">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:minHeight">@dimen/tab_bar_default_height</item>
+        <item name="android:textSize">14dp</item>
+
+        <item name="android:background">@drawable/tab_control_background</item>
+        <item name="android:textColor">@color/tab_control_text</item>
+
+        <item name="textAllCaps">false</item>
+
+        <item name="lineColor">@color/bordeTabla</item>
+        <item name="lineHeightUnselected">1dp</item>
+        <item name="lineHeightSelected">6dp</item>
+    </style>
+</resources>

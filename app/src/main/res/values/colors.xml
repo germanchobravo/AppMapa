@@ -13,6 +13,8 @@
     <color name="titulo_filtros">#3a9cd7</color>
     <color name="texto_gris_filtros">#666666</color>
     <color name="highlight">#FF38c0f4</color>
+    <color name="textTabControl">#019DDA</color>
+    <color name="tabControlSeleccionado">#1FABE2</color>
 
     <!-- Background Drawable Colors -->
     <color name="holo_pressed">#8000B6E6</color>
