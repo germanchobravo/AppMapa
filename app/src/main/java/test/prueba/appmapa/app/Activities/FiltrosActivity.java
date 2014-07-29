@@ -17,6 +17,7 @@ import android.widget.*;
 import org.json.JSONObject;
 import test.prueba.appmapa.app.Dominio.Filtros;
 import test.prueba.appmapa.app.Dominio.Localidad;
+import test.prueba.appmapa.app.Dominio.TipoMoneda;
 import test.prueba.appmapa.app.Fragments.DialogTipoPropiedades;
 import test.prueba.appmapa.app.Parsers.LocalidadJSONParser;
 import test.prueba.appmapa.app.R;
@@ -46,6 +47,7 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
     TextView txtTipoPropiedades;
     FragmentTransaction ft;
     DialogFragment dialogTipoPropiedades;
+    AutoCompleteTextView autoCompView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +66,18 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
         actionBar.setCustomView(view);
 
 
-        AutoCompleteTextView autoCompView = (AutoCompleteTextView)view.findViewById(R.id.action_filtros_autocomplete);
+        autoCompView = (AutoCompleteTextView)view.findViewById(R.id.action_filtros_autocomplete);
         autoCompView.setAdapter(new PlacesAutoCompleteAdapter(getBaseContext(), android.R.layout.simple_list_item_1));
+
+/*
+
+        AutoCompleteTextView autoCompView = (AutoCompleteTextView)view.findViewById(R.id.action_filtros_autocomplete);
+
+        PlacesAutoCompleteAdapter adapterAutoComplete = new PlacesAutoCompleteAdapter(getBaseContext(),
+                android.R.layout.simple_spinner_dropdown_item);
+        //autoCompView.setDropDownBackgroundResource(R.drawable.button_selector);
+        autoCompView.setAdapter(adapterAutoComplete);*/
+
         autoCompView.setOnItemClickListener(this);
 
         Intent intent = getIntent();
@@ -94,6 +106,9 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
 
         txtTipoPropiedades = (TextView)findViewById(R.id.txtTipoPropiedades);
 
+        if(filtros != null && filtros.getTiposPropiedad() != null) {
+            txtTipoPropiedades.setText(TextUtils.join(", ", filtros.getTiposPropiedad()));
+        }
 
         tipoPropiedad.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,24 +161,63 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
             }
         });
 
+        RadioGroup groupTipoMoneda = (RadioGroup)findViewById(R.id.groupTipoMoneda);
+        groupTipoMoneda.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if(checkedId == R.id.optPesos)
+                {
+                    filtros.setTipoMoneda(TipoMoneda.Pesos);
+
+                }else
+                {
+                    filtros.setTipoMoneda(TipoMoneda.UF);
+
+                }
+            }
+        });
+
+        String[] precioDesde = getResources().getStringArray(R.array.precio_$_array);
+
+        Spinner spnPrecioDesde = (Spinner)findViewById(R.id.spnrPrecioDesde);
+
+        precioDesde[0] = "Desde";
+        ArrayAdapter<String> adapterPrecioDesde = new ArrayAdapter(getBaseContext(), android.R.layout.simple_spinner_item, precioDesde);
+        adapterPrecioDesde.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnPrecioDesde.setAdapter(adapterPrecioDesde);
+
+        String[] precioHasta = getResources().getStringArray(R.array.precio_$_array);
+
+        Spinner spnPrecioHasta = (Spinner)findViewById(R.id.spnrPrecioHasta);
+
+        precioHasta[0] = "Hasta";
+        ArrayAdapter<String> adapterPrecioHasta = new ArrayAdapter(getBaseContext(), android.R.layout.simple_spinner_item, precioHasta);
+
+        adapterPrecioHasta.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnPrecioHasta.setAdapter(adapterPrecioHasta);
+
+        Spinner spnSuperficieDesde = (Spinner)findViewById(R.id.spnrSuperficieDesde);
+
+
+
+        String[] superficiesDesde = getResources().getStringArray(R.array.superficies_array);
+        superficiesDesde[0] = "Desde";
+        ArrayAdapter<String> adapterSuperficieDesde = new ArrayAdapter(getBaseContext(),
+                                                        android.R.layout.simple_spinner_item, superficiesDesde);
+        adapterSuperficieDesde.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnSuperficieDesde.setAdapter(adapterSuperficieDesde);
+
+        Spinner spnSuperficieHasta = (Spinner)findViewById(R.id.spnrSuperficieHasta);
+
+        String[] superficiesHasta = getResources().getStringArray(R.array.superficies_array);
+        superficiesHasta[0] = "Hasta";
+        ArrayAdapter<String> adapterSuperficieHasta = new ArrayAdapter(getBaseContext(),
+                android.R.layout.simple_spinner_item, superficiesHasta);
+        adapterSuperficieHasta.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnSuperficieHasta.setAdapter(adapterSuperficieHasta);
+
+
     }
-
-
-
-   /* public void funcOnClickOperaciones(View view)
-    {
-        switch (view.getId()) {
-            case R.id.btnOperacionVenta:
-                view.setSelected(true);
-                break;
-            case R.id.btnOperacionArriendo:
-                view.setSelected(true);
-                break;
-            case R.id.btnOperacionArriendoTemporada:
-                view.setSelected(true);
-                break;
-        }
-    }*/
 
 
     private ArrayList<Localidad> autocomplete(String input) {
@@ -224,13 +278,14 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
 
     @Override
     public void onPropiedadesSeleccionada(String[] arrayString) {
-
-
-        txtTipoPropiedades.setText(TextUtils.join(", ", arrayString));
-
-        filtros.setTiposPropiedad(arrayString);
-
-
+        if(arrayString.length > 0) {
+            txtTipoPropiedades.setText(TextUtils.join(", ", arrayString));
+            filtros.setTiposPropiedad(arrayString);
+        }else
+        {
+            txtTipoPropiedades.setText(null);
+            filtros.setTiposPropiedad(null);
+        }
 
     }
 
@@ -287,6 +342,7 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_filtros,menu);
 
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -305,9 +361,9 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
 
                 return true;
             case R.id.action_cancelar:
-
-                Toast.makeText(getBaseContext(), "cancelo", Toast.LENGTH_SHORT).show();
-
+                Intent cancelIntent = new Intent();
+                setResult(RESULT_CANCELED, cancelIntent);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

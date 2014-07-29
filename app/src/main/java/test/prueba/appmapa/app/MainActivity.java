@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -185,14 +186,17 @@ public class MainActivity extends Activity {
 
         if (requestCode == 1) {
             if(resultCode == RESULT_OK){
-                Filtros filtros = (Filtros)data.getSerializableExtra("filtros");
+                filtros = (Filtros)data.getSerializableExtra("filtros");
 
                 android.app.FragmentManager fm = getFragmentManager();
 
                 Bundle arguments = new Bundle();
                 arguments.putString("localidadReferencia", filtros.getLocalidadReferencia());
 
-                if(fragmentMap.isVisible())
+                if(filtros.getLocalidadReferencia() != null) {
+                    fragmentMap.RecibeLocalidadReferencia(filtros.getLocalidadReferencia());
+                }
+                /*if(fragmentMap.isVisible())
                 {
 
                     fm.beginTransaction()
@@ -218,7 +222,7 @@ public class MainActivity extends Activity {
                     fm.beginTransaction()
                             .replace(android.R.id.content, fragmentList)
                             .commit();
-                }
+                }*/
 
             }
             if (resultCode == RESULT_CANCELED) {
@@ -278,9 +282,33 @@ public class MainActivity extends Activity {
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("AppMapa", "onStop() called.");
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("AppMapa", "onPause() called.");
+    }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d("AppMapa", "onRestart() called.");
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("AppMapa", "onResume() called.");
+    }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("AppMapa", "onDestroy() called.");
+    }
 }

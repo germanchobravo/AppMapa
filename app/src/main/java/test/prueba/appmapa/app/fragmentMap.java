@@ -8,29 +8,21 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
-import android.widget.*;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.*;
 import org.json.JSONObject;
-import test.prueba.appmapa.app.Dominio.Filtros;
-import test.prueba.appmapa.app.Dominio.Localidad;
-import test.prueba.appmapa.app.Dominio.Propiedad;
-import test.prueba.appmapa.app.Dominio.PuntoGeografico;
+import test.prueba.appmapa.app.Dominio.*;
 import test.prueba.appmapa.app.Parsers.LocalidadDetalleJSONParser;
-import test.prueba.appmapa.app.Parsers.LocalidadJSONParser;
 import test.prueba.appmapa.app.Parsers.MeliPropiedadJSONParser;
-import test.prueba.appmapa.app.Utiles.DownLoader;
 import test.prueba.appmapa.app.task.DownLoaderTask;
 import test.prueba.appmapa.app.task.IAsyncTaskDelegate;
 import test.prueba.appmapa.app.task.ICallBackListPropiedades;
 
-import java.net.HttpURLConnection;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -151,6 +143,32 @@ public class FragmentMap extends Fragment implements OnItemClickListener, ICallB
 
         map = ((MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment)).getMap();
 
+        map.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition cameraPosition) {
+
+                /*
+                    VisibleRegion visibleRegion = map.getProjection()
+                        .getVisibleRegion();
+
+                    Point x = map.getProjection().toScreenLocation(
+                                        visibleRegion.farRight);
+
+                    Point y = map.getProjection().toScreenLocation(
+                                        visibleRegion.nearLeft);
+
+                    Point centerPoint = new Point(x.x / 2, y.y / 2);
+
+                    LatLng centerFromPoint = map.getProjection().fromScreenLocation(
+                                        centerPoint);
+
+                 */
+
+               // LatLng center = map.getCameraPosition().target;
+               // Log.d("AppMapa", "Center From camera: Long: " + center.longitude + " Lat" + center.latitude);
+            }
+        });
+
         getCurrentLocationTask = new CurrentLocationTask();
         getCurrentLocationTask.execute();
 
@@ -162,40 +180,8 @@ public class FragmentMap extends Fragment implements OnItemClickListener, ICallB
         //map.setMyLocationEnabled(true);
 
 
-        /*AutoCompleteTextView autoCompView = (AutoCompleteTextView)view.findViewById(R.id.txtAutoComplete);
-
-
-        autoCompView.setAdapter(new PlacesAutoCompleteAdapter(inflater.getContext(), android.R.layout.simple_list_item_1));
-        autoCompView.setOnItemClickListener(this);*/
-
         return view;
 
-
-
-    }
-
-    private ArrayList<Localidad> autocomplete(String input) {
-        ArrayList<Localidad> resultList = null;
-
-        HttpURLConnection conn = null;
-        StringBuilder jsonResults = new StringBuilder();
-
-        try {
-            StringBuilder sb = new StringBuilder(PLACES_API_BASE + TYPE_AUTOCOMPLETE + OUT_JSON);
-            sb.append("?sensor=false&key=" + API_KEY);
-            sb.append("&components=country:cl");
-            sb.append("&input=" + URLEncoder.encode(input, "utf8"));
-
-            String data = DownLoader.DownloadUrl(sb.toString());
-
-            JSONObject jsonObj = new JSONObject(data.toString());
-            resultList = LocalidadJSONParser.parse(jsonObj);
-
-        } catch (Exception e) {
-            Log.e(LOG_TAG, "Cannot process JSON results", e);
-        }
-
-        return resultList;
     }
 
 
@@ -238,9 +224,9 @@ public class FragmentMap extends Fragment implements OnItemClickListener, ICallB
 
     private void ejecutarLocalidadDetalle(final JSONObject jsonObj) {
 
-        PuntoGeografico punto = LocalidadDetalleJSONParser.parse(jsonObj);
+        LocalidadDetalle localidadDetalle = LocalidadDetalleJSONParser.parse(jsonObj);
 
-        latLng = new LatLng(punto.GetLat(), punto.GetLng());
+        latLng = new LatLng(localidadDetalle.getPuntoGeografico().GetLat(), localidadDetalle.getPuntoGeografico().GetLng());
 
         markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
@@ -285,8 +271,8 @@ public class FragmentMap extends Fragment implements OnItemClickListener, ICallB
 
         StringBuilder url = new StringBuilder(PLACES_API_BASE + TYPE_DETAILS + OUT_JSON);
         url.append("?sensor=false&key=" + API_KEY);
+        url.append("&language=es");
         url.append("&reference=" + reference);
-
         detaisTask.execute(url.toString());
 
     }
@@ -373,52 +359,7 @@ public class FragmentMap extends Fragment implements OnItemClickListener, ICallB
         }
     }
 
-    private class PlacesAutoCompleteAdapter extends ArrayAdapter<Localidad> implements Filterable {
-        private ArrayList<Localidad> resultList;
 
-        public PlacesAutoCompleteAdapter(Context context, int textViewResourceId) {
-            super(context, textViewResourceId);
-        }
-
-        @Override
-        public int getCount() {
-            return resultList.size();
-        }
-
-        @Override
-        public Localidad getItem(int index) {
-
-            return resultList.get(index);
-        }
-
-        @Override
-        public Filter getFilter() {
-            Filter filter = new Filter() {
-                @Override
-                protected FilterResults performFiltering(CharSequence constraint) {
-                    FilterResults filterResults = new FilterResults();
-                    if (constraint != null) {
-
-                        resultList = autocomplete(constraint.toString());
-
-                        filterResults.values = resultList;
-                        filterResults.count = resultList.size();
-                    }
-                    return filterResults;
-                }
-
-                @Override
-                protected void publishResults(CharSequence constraint, FilterResults results) {
-                    if (results != null && results.count > 0) {
-                        notifyDataSetChanged();
-                    }
-                    else {
-                        notifyDataSetInvalidated();
-                    }
-                }};
-            return filter;
-        }
-    }
 
     private Location bestLastKnownLocation(float minAccuracy, long maxAge) {
 

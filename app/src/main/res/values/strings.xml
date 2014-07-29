@@ -24,8 +24,16 @@
     <string name="Arriendo_temporada">Arriendo temporada</string>
     <string name="Aplicar">Aplicar</string>
     <string name="Cancelar">Cancelar</string>
-    <string name="Tipo_de_propiedad">Tipo de propiedades</string>
+    <string name="Tipo_de_propiedad">Tipo de propiedad</string>
     <string name="Dormitorios">Dormitorios</string>
     <string name="Banos">Baños</string>
+    <string name="str_pesos">CL$</string>
+    <string name="str_UF">UF</string>
+    <string name="precio_de_propiedad">Precio de propiedad</string>
+    <string name="Superficie">Superficie</string>
+    <string name="Desde">Desde</string>
+    <string name="Cualquier">Cualquier</string>
+    <string name="solo_amoblado">Sólo amoblado</string>
+    <string name="limpiar_filtros">Limpiar filtros</string>
 
 </resources>

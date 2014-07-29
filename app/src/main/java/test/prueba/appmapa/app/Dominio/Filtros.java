@@ -33,4 +33,9 @@ public class Filtros implements Serializable {
     public int getBanos() { return banos; }
     public void setBanos(int banos) { this.banos = banos; }
 
+    private TipoMoneda tipoMoneda;
+
+    public TipoMoneda getTipoMoneda() { return tipoMoneda; }
+
+    public void setTipoMoneda(TipoMoneda tipoMoneda) { this.tipoMoneda = tipoMoneda; }
 }

@@ -9,10 +9,56 @@
         <item>Todos</item>
         <item>Casa</item>
         <item>Departamento</item>
-        <item>Oficina</item>
+        <!--<item>Oficina</item>
         <item>Sitio</item>
         <item>Comercial</item>
         <item>Industrial</item>
-        <item>Agrícola</item>
+        <item>Agrícola</item>-->
+    </string-array>
+
+    <string-array name="precio_$_array">
+        <item>var</item>
+        <item>$50.000</item>
+        <item>$100.000</item>
+        <item>$150.000</item>
+        <item>$200.000</item>
+        <item>$300.000</item>
+        <item>$400.000</item>
+        <item>$500.000</item>
+        <item>$1.000.000</item>
+        <item>$2.000.000</item>
+        <item>$5.000.000</item>
+    </string-array>
+
+    <string-array name="precio_UF_array">
+        <item>var</item>
+        <item>500UF</item>
+        <item>1.000UF</item>
+        <item>1.500UF</item>
+        <item>2.000UF</item>
+        <item>2.500UF</item>
+        <item>3.000UF</item>
+        <item>4.000UF</item>
+        <item>5.000UF</item>
+        <item>10.000UF</item>
+        <item>20.000UF</item>
+    </string-array>
+
+    <string-array name="superficies_array">
+        <item>var</item>
+        <item>50 m²</item>
+        <item>100 m²</item>
+        <item>150 m²</item>
+        <item>200 m²</item>
+        <item>250 m²</item>
+        <item>300 m²</item>
+        <item>500 m²</item>
+        <item>600 m²</item>
+        <item>1000 m²</item>
+        <item>1500 m²</item>
+        <item>2000 m²</item>
+        <item>5000 m²</item>
+        <item>10000 m²</item>
+        <item>20000 m²</item>
     </string-array>
 </resources>

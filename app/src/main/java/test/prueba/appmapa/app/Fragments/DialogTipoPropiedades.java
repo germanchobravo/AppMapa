@@ -104,10 +104,10 @@ public class DialogTipoPropiedades extends DialogFragment implements View.OnClic
 
         View view = inflater.inflate(R.layout.dialogo_tipo_propiedades, container, false);
 
-        String[] sports = getResources().getStringArray(R.array.tipoPropiedades_array);
+        String[] tipoPropiedades = getResources().getStringArray(R.array.tipoPropiedades_array);
 
         adapter = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_list_item_multiple_choice, sports);
+                android.R.layout.simple_list_item_multiple_choice, tipoPropiedades);
 
         listView = (ListView)view.findViewById(R.id.listTipoPropiedad);
 
@@ -168,16 +168,14 @@ public class DialogTipoPropiedades extends DialogFragment implements View.OnClic
                 selectedItems.add(adapter.getItem(position));
         }
 
+        String[] outputStrArr = new String[selectedItems.size()];
         if(selectedItems.size() > 0) {
-
-            String[] outputStrArr = new String[selectedItems.size()];
-
             for (int i = 0; i < selectedItems.size(); i++) {
                 outputStrArr[i] = selectedItems.get(i);
             }
-
-            mSeleccionListener.onPropiedadesSeleccionada(outputStrArr);
         }
+        mSeleccionListener.onPropiedadesSeleccionada(outputStrArr);
+
         getDialog().dismiss();
     }
 

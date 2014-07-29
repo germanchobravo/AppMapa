@@ -3,18 +3,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        >
 
+        >
 
     <AutoCompleteTextView
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:hint="@string/Buscar_Direccion"
             android:id="@+id/action_filtros_autocomplete"
+            android:actionViewClass="android.widget.SearchView"
+            android:icon="@drawable/ic_busqueda"
+            style="@style/autoCompleteFiltros"
+
 
             />
-
-
 
 
     <!--android:background="@drawable/ic_action_search"-->

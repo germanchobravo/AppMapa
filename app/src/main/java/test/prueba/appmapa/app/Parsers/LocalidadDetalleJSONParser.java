@@ -2,6 +2,7 @@ package test.prueba.appmapa.app.Parsers;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import test.prueba.appmapa.app.Dominio.LocalidadDetalle;
 import test.prueba.appmapa.app.Dominio.PuntoGeografico;
 
 /**
@@ -9,24 +10,31 @@ import test.prueba.appmapa.app.Dominio.PuntoGeografico;
  */
 public class LocalidadDetalleJSONParser {
 
-public static PuntoGeografico parse(JSONObject jsonObject)
+public static LocalidadDetalle parse(JSONObject jsonObject)
 {
     return getPunto(jsonObject);
 }
 
     /** Parsing the Place JSON object */
-    private static PuntoGeografico getPunto(JSONObject jsonObj){
+    private static LocalidadDetalle getPunto(JSONObject jsonObj){
+
+        LocalidadDetalle localidadDetalle = new LocalidadDetalle();
+
 
         PuntoGeografico pg = new PuntoGeografico();
 
         try {
 
+            localidadDetalle.setFormattedAddress((String)jsonObj.getJSONObject("result").get("formatted_address"));
+
             pg.SetLat((Double)jsonObj.getJSONObject("result").getJSONObject("geometry").getJSONObject("location").get("lat"));
             pg.SetLng((Double)jsonObj.getJSONObject("result").getJSONObject("geometry").getJSONObject("location").get("lng"));
+
+            localidadDetalle.setPuntoGeografico(pg);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return pg;
+        return localidadDetalle;
     }
 }
