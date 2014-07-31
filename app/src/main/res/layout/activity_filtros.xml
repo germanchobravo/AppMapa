@@ -415,6 +415,7 @@
                 <CheckBox
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/checkSoloAmoblado"
                         android:text="@string/solo_amoblado"
                         android:textSize="14dp"
                         android:textColor="@color/texto_gris_filtros"
@@ -430,6 +431,7 @@
                         android:layout_height="45dp"
                         android:gravity="center"
                         android:background="#C6E2EC"
+                        android:id="@+id/btnLimpiarFiltros"
                         >
                         <TextView
                                 android:layout_width="wrap_content"

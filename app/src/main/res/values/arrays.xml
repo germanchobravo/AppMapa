@@ -53,20 +53,19 @@
     </string-array>
 
     <string-array name="superficies_array">
-        <item>var</item>
-        <item>50 m²</item>
-        <item>100 m²</item>
-        <item>150 m²</item>
-        <item>200 m²</item>
-        <item>250 m²</item>
-        <item>300 m²</item>
-        <item>500 m²</item>
-        <item>600 m²</item>
-        <item>1000 m²</item>
-        <item>1500 m²</item>
-        <item>2000 m²</item>
-        <item>5000 m²</item>
-        <item>10000 m²</item>
-        <item>20000 m²</item>
+        <item>50</item>
+        <item>100</item>
+        <item>150</item>
+        <item>200</item>
+        <item>250</item>
+        <item>300</item>
+        <item>500</item>
+        <item>600</item>
+        <item>1000</item>
+        <item>1500</item>
+        <item>2000</item>
+        <item>5000</item>
+        <item>10000</item>
+        <item>20000</item>
     </string-array>
 </resources>

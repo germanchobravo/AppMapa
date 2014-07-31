@@ -1,6 +1,9 @@
 package test.prueba.appmapa.app.Activities;
 
-import android.app.*;
+import android.app.ActionBar;
+import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -60,8 +63,11 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
     List<DataSpinnerModel> listadoPrecio$;
     List<DataSpinnerModel> listadoPrecioUF;
     List<DataSpinnerModel> listadoActualPrecio;
+    List<DataSpinnerModel> listadoSuperficie;
     RadioGroup groupTipoOperacion;
     RadioGroup groupTipoMoneda;
+    Spinner spnSuperficieDesde;
+    Spinner spnSuperficieHasta;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -97,8 +103,6 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
         autoCompView.setAdapter(adapterAutoComplete);*/
 
         autoCompView.setOnItemClickListener(this);
-
-
 
         groupTipoOperacion = (RadioGroup)findViewById(R.id.groupTipoOperaciones);
         groupTipoOperacion.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -164,7 +168,7 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
             }
         });
 
-        RadioGroup groupDormitorios = (RadioGroup)findViewById(R.id.groupDormitorios);
+        final RadioGroup groupDormitorios = (RadioGroup)findViewById(R.id.groupDormitorios);
         groupDormitorios.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -183,7 +187,7 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
         });
 
 
-        RadioGroup groupBanos = (RadioGroup)findViewById(R.id.groupBanos);
+        final RadioGroup groupBanos = (RadioGroup)findViewById(R.id.groupBanos);
         groupBanos.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -280,23 +284,65 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
             }
         });
 
-        Spinner spnSuperficieDesde = (Spinner)findViewById(R.id.spnrSuperficieDesde);
+        spnSuperficieDesde = (Spinner)findViewById(R.id.spnrSuperficieDesde);
+        spnSuperficieHasta = (Spinner)findViewById(R.id.spnrSuperficieHasta);
 
-        String[] superficiesDesde = getResources().getStringArray(R.array.superficies_array);
-        superficiesDesde[0] = "Desde";
-        ArrayAdapter<String> adapterSuperficieDesde = new ArrayAdapter(getBaseContext(),
-                                                        android.R.layout.simple_spinner_item, superficiesDesde);
-        adapterSuperficieDesde.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spnSuperficieDesde.setAdapter(adapterSuperficieDesde);
+        spnSuperficieDesde.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                DataSpinnerModel data = (DataSpinnerModel) parent.getItemAtPosition(position);
+                filtros.setSuperficieDesde(data);
+                revisarSpinnerHasta(position, spnSuperficieHasta, filtros.getSuperficieHasta(), listadoSuperficie);
+            }
 
-        Spinner spnSuperficieHasta = (Spinner)findViewById(R.id.spnrSuperficieHasta);
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
-        String[] superficiesHasta = getResources().getStringArray(R.array.superficies_array);
-        superficiesHasta[0] = "Hasta";
-        ArrayAdapter<String> adapterSuperficieHasta = new ArrayAdapter(getBaseContext(),
-                android.R.layout.simple_spinner_item, superficiesHasta);
-        adapterSuperficieHasta.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spnSuperficieHasta.setAdapter(adapterSuperficieHasta);
+            }
+        });
+
+        spnSuperficieHasta.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                DataSpinnerModel data = (DataSpinnerModel) parent.getItemAtPosition(position);
+                filtros.setSuperficieHasta(data);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        final CheckBox soloAmoblado = (CheckBox)findViewById(R.id.checkSoloAmoblado);
+        soloAmoblado.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                filtros.setSoloAmoblado(isChecked);
+            }
+        });
+
+        LinearLayout btnLimpiar = (LinearLayout)findViewById(R.id.btnLimpiarFiltros);
+        btnLimpiar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                filtros.LimpiarFiltros();
+
+                groupTipoOperacion.check(R.id.optVenta);
+                groupDormitorios.check(R.id.optDorm0);
+                groupBanos.check(R.id.optBano0);
+                groupTipoMoneda.check(R.id.optPesos);
+                spnPrecioDesde.setSelection(0);
+                spnPrecioHasta.setSelection(0);
+                spnSuperficieDesde.setSelection(0);
+                spnSuperficieHasta.setSelection(0);
+                if(soloAmoblado.isChecked()) { soloAmoblado.setChecked(false); }
+                txtTipoPropiedades.setText(null);
+
+
+            }
+        });
+
 
     }
 
@@ -381,6 +427,16 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
             listadoPrecioUF.add(dataSpinnerModel);
         }
 
+        String[] arraySuperficie =  getResources().getStringArray(R.array.superficies_array);
+
+        listadoSuperficie = new ArrayList<DataSpinnerModel>();
+        for (int i = 0; i < arraySuperficie.length; i++)
+        {
+            valor = Double.parseDouble(arraySuperficie[i]);
+            dataSpinnerModel = new DataSpinnerModel(i + 1, formateador.format(valor) + " m²", valor);
+            listadoSuperficie.add(dataSpinnerModel);
+        }
+
     }
     @Override
     protected void onStart() {
@@ -394,16 +450,6 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
             txtTipoPropiedades.setText(TextUtils.join(", ", filtros.getTiposPropiedad()));
         }
 
-        /*
-        listDataSpinner = new ArrayList<DataSpinnerModel>();
-
-        listDataSpinner.add(new DataSpinnerModel(0, "Desde",0));
-        listDataSpinner.addAll(listadoPrecio$);
-
-        adapterPrecioDesde = new ArrayAdapter(getBaseContext(), android.R.layout.simple_spinner_item, listDataSpinner);
-        adapterPrecioDesde.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spnPrecioDesde.setAdapter(adapterPrecioDesde);
-        */
         if(filtros.getTipoMoneda() != null) {
             getOperacionSeleccionada().TipoMoneda = filtros.getTipoMoneda();
             checkGroupTipoMoneda(filtros.getTipoMoneda());
@@ -411,6 +457,15 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
         {
             checkGroupTipoMoneda(filtros.getOperacionPorTipo(TipoOperacion.Venta).TipoMoneda);
         }
+
+        listDataSpinner = new ArrayList<DataSpinnerModel>();
+
+        listDataSpinner.add(new DataSpinnerModel(0, "Desde",0));
+        listDataSpinner.addAll(listadoSuperficie);
+        ArrayAdapter<String> adapterSuperficieDesde = new ArrayAdapter(getBaseContext(),
+                android.R.layout.simple_spinner_item, listDataSpinner);
+        adapterSuperficieDesde.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnSuperficieDesde.setAdapter(adapterSuperficieDesde);
     }
 
     private void checkGroupTipoMoneda(TipoMoneda tipoMoneda)
