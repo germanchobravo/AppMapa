@@ -1,9 +1,6 @@
 package test.prueba.appmapa.app.Activities;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.DialogFragment;
-import android.app.FragmentTransaction;
+import android.app.*;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,13 +15,19 @@ import org.json.JSONObject;
 import test.prueba.appmapa.app.Dominio.Filtros;
 import test.prueba.appmapa.app.Dominio.Localidad;
 import test.prueba.appmapa.app.Dominio.TipoMoneda;
+import test.prueba.appmapa.app.Dominio.TipoOperacion;
 import test.prueba.appmapa.app.Fragments.DialogTipoPropiedades;
+import test.prueba.appmapa.app.Model.DataSpinnerModel;
+import test.prueba.appmapa.app.Model.OperacionFiltroModel;
 import test.prueba.appmapa.app.Parsers.LocalidadJSONParser;
 import test.prueba.appmapa.app.R;
 import test.prueba.appmapa.app.Utiles.DownLoader;
 
 import java.net.URLEncoder;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -49,8 +52,19 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
     DialogFragment dialogTipoPropiedades;
     AutoCompleteTextView autoCompView;
 
+    List<DataSpinnerModel> listDataSpinner;
+    ArrayAdapter<CharSequence> adapterPrecioDesde;
+    ArrayAdapter<CharSequence> adapterHasta;
+    Spinner spnPrecioDesde;
+    Spinner spnPrecioHasta;
+    List<DataSpinnerModel> listadoPrecio$;
+    List<DataSpinnerModel> listadoPrecioUF;
+    List<DataSpinnerModel> listadoActualPrecio;
+    RadioGroup groupTipoOperacion;
+    RadioGroup groupTipoMoneda;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_filtros);
@@ -64,6 +78,10 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
         View view = View.inflate(getApplicationContext(), R.layout.actionbar_filtros,
                 null);
         actionBar.setCustomView(view);
+
+        //ACA ES DONDE SE SETEA FILTROS
+        Intent intent = getIntent();
+        filtros = (Filtros) intent.getSerializableExtra("filtros");
 
 
         autoCompView = (AutoCompleteTextView)view.findViewById(R.id.action_filtros_autocomplete);
@@ -80,24 +98,42 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
 
         autoCompView.setOnItemClickListener(this);
 
-        Intent intent = getIntent();
-        filtros = (Filtros) intent.getSerializableExtra("filtros");
 
-        RadioGroup groupTipoOperacion = (RadioGroup)findViewById(R.id.groupTipoOperaciones);
+
+        groupTipoOperacion = (RadioGroup)findViewById(R.id.groupTipoOperaciones);
         groupTipoOperacion.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
+                OperacionFiltroModel op;
                 switch (checkedId)
                 {
-                    case R.id.optArriendo:
-                        filtros.setTipoOperacion(1);
-                        break;
                     case R.id.optVenta:
-                        filtros.setTipoOperacion(2);
+                        op = filtros.getOperacionPorTipo(TipoOperacion.Venta);
+                        break;
+                    case R.id.optArriendo:
+                        op = filtros.getOperacionPorTipo(TipoOperacion.Arriendo);
                         break;
                     case R.id.optArriendoTemp:
-                        filtros.setTipoOperacion(3);
+                        op = filtros.getOperacionPorTipo(TipoOperacion.Arriendo_Temporada);
                         break;
+                    default:
+                        op = filtros.getOperacionPorTipo(TipoOperacion.Venta);
+                        break;
+                }
+
+                checkGroupTipoMoneda(op.TipoMoneda);
+                if(op.PrecioDesde != null) {
+                    spnPrecioDesde.setSelection(op.PrecioDesde.getIndex());
+                }else
+                {
+                    spnPrecioDesde.setSelection(0);
+                }
+                if(op.PrecioHasta != null)
+                {
+                    spnPrecioHasta.setSelection(op.PrecioHasta.getIndex());
+                }else
+                {
+                    spnPrecioHasta.setSelection(0);
                 }
             }
         });
@@ -105,10 +141,6 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
         LinearLayout tipoPropiedad = (LinearLayout)findViewById(R.id.cmbTipoPropiedad);
 
         txtTipoPropiedades = (TextView)findViewById(R.id.txtTipoPropiedades);
-
-        if(filtros != null && filtros.getTiposPropiedad() != null) {
-            txtTipoPropiedades.setText(TextUtils.join(", ", filtros.getTiposPropiedad()));
-        }
 
         tipoPropiedad.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,44 +193,86 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
             }
         });
 
-        RadioGroup groupTipoMoneda = (RadioGroup)findViewById(R.id.groupTipoMoneda);
+
+        spnPrecioDesde = (Spinner)findViewById(R.id.spnrPrecioDesde);
+
+        groupTipoMoneda = (RadioGroup)findViewById(R.id.groupTipoMoneda);
         groupTipoMoneda.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+                DataSpinnerModel data;
+
                 if(checkedId == R.id.optPesos)
                 {
-                    filtros.setTipoMoneda(TipoMoneda.Pesos);
+                    //filtros.setTipoMoneda(TipoMoneda.Pesos);
+                    listadoActualPrecio = listadoPrecio$;
+                    getOperacionSeleccionada().TipoMoneda = TipoMoneda.Pesos;
 
-                }else
+
+                }else {
+                    //filtros.setTipoMoneda(TipoMoneda.UF);
+                    listadoActualPrecio = listadoPrecioUF;
+                    getOperacionSeleccionada().TipoMoneda = TipoMoneda.UF;
+                }
+
+                listDataSpinner = new ArrayList<DataSpinnerModel>();
+
+                listDataSpinner.add(new DataSpinnerModel(0, "Desde",0));
+                listDataSpinner.addAll(listadoActualPrecio);
+                adapterPrecioDesde = new ArrayAdapter(getBaseContext(), android.R.layout.simple_spinner_item, listDataSpinner);
+                adapterPrecioDesde.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spnPrecioDesde.setAdapter(adapterPrecioDesde);
+
+                if(getOperacionSeleccionada().PrecioHasta != null && getOperacionSeleccionada().PrecioHasta.getIndex() > 0)
                 {
-                    filtros.setTipoMoneda(TipoMoneda.UF);
-
+                    data = listadoActualPrecio.get(getOperacionSeleccionada().PrecioHasta.getIndex() -1);
+                    getOperacionSeleccionada().PrecioHasta = data;
+                }
+                if(getOperacionSeleccionada().PrecioDesde != null && getOperacionSeleccionada().PrecioDesde.getIndex() > 0)
+                {
+                    data = listadoActualPrecio.get(getOperacionSeleccionada().PrecioDesde.getIndex() -1);
+                    getOperacionSeleccionada().PrecioDesde = data;
+                    spnPrecioDesde.setSelection(data.getIndex());
                 }
             }
         });
 
-        String[] precioDesde = getResources().getStringArray(R.array.precio_$_array);
+        spnPrecioDesde.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-        Spinner spnPrecioDesde = (Spinner)findViewById(R.id.spnrPrecioDesde);
+                DataSpinnerModel data = (DataSpinnerModel) parent.getItemAtPosition(position);
+                //filtros.setPrecioDesde(data);
+                revisarSpinnerHasta(position, spnPrecioHasta, getOperacionSeleccionada().PrecioHasta, listadoActualPrecio);
 
-        precioDesde[0] = "Desde";
-        ArrayAdapter<String> adapterPrecioDesde = new ArrayAdapter(getBaseContext(), android.R.layout.simple_spinner_item, precioDesde);
-        adapterPrecioDesde.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spnPrecioDesde.setAdapter(adapterPrecioDesde);
+                getOperacionSeleccionada().PrecioDesde = data;
 
-        String[] precioHasta = getResources().getStringArray(R.array.precio_$_array);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
-        Spinner spnPrecioHasta = (Spinner)findViewById(R.id.spnrPrecioHasta);
+            }
+        });
 
-        precioHasta[0] = "Hasta";
-        ArrayAdapter<String> adapterPrecioHasta = new ArrayAdapter(getBaseContext(), android.R.layout.simple_spinner_item, precioHasta);
+        spnPrecioHasta = (Spinner)findViewById(R.id.spnrPrecioHasta);
 
-        adapterPrecioHasta.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spnPrecioHasta.setAdapter(adapterPrecioHasta);
+
+        spnPrecioHasta.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                DataSpinnerModel data = (DataSpinnerModel) parent.getItemAtPosition(position);
+                //filtros.setPrecioHasta(data);
+
+                getOperacionSeleccionada().PrecioHasta = data;
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         Spinner spnSuperficieDesde = (Spinner)findViewById(R.id.spnrSuperficieDesde);
-
-
 
         String[] superficiesDesde = getResources().getStringArray(R.array.superficies_array);
         superficiesDesde[0] = "Desde";
@@ -216,9 +290,135 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
         adapterSuperficieHasta.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spnSuperficieHasta.setAdapter(adapterSuperficieHasta);
 
+    }
+
+    private OperacionFiltroModel getOperacionSeleccionada()
+    {
+        OperacionFiltroModel operacionFiltroModel;
+        switch (groupTipoOperacion.getCheckedRadioButtonId())
+        {
+            case R.id.optVenta:
+                operacionFiltroModel = filtros.getOperacionPorTipo(TipoOperacion.Venta);
+                break;
+            case R.id.optArriendo:
+                operacionFiltroModel = filtros.getOperacionPorTipo(TipoOperacion.Arriendo);
+                break;
+            case R.id.optArriendoTemp:
+                operacionFiltroModel = filtros.getOperacionPorTipo(TipoOperacion.Arriendo_Temporada);
+                break;
+            default:
+                operacionFiltroModel = filtros.getOperacionPorTipo(TipoOperacion.Venta);
+                break;
+        }
+
+        return operacionFiltroModel;
+    }
+
+    private void revisarSpinnerHasta(int positionDesde, Spinner spinnerHasta, DataSpinnerModel dataHasta, List<DataSpinnerModel> listado)
+    {
+        listDataSpinner = new ArrayList<DataSpinnerModel>();
+
+
+        listDataSpinner.add(new DataSpinnerModel(0, "Hasta",0));
+
+        int index = positionDesde == 0 ? positionDesde : positionDesde -1;
+
+        for(int i = index; i < listado.size(); i++) {
+            listDataSpinner.add(listado.get(i));
+        }
+
+        adapterHasta = new ArrayAdapter(getBaseContext(), android.R.layout.simple_spinner_item, listDataSpinner);
+        adapterHasta.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerHasta.setAdapter(adapterHasta);
+
+        if(dataHasta != null) {
+            for (int i= 0; i < spinnerHasta.getCount(); i++)
+            {
+                if(spinnerHasta.getItemAtPosition(i).equals(dataHasta))
+                {
+                    spinnerHasta.setSelection(i);
+                    break;
+                }
+            }
+
+        }
 
     }
 
+    void initArray()
+    {
+        String[] array$ =  getResources().getStringArray(R.array.precio_$_array);
+        String[] arrayUF =  getResources().getStringArray(R.array.precio_UF_array);
+        DataSpinnerModel dataSpinnerModel;
+
+        DecimalFormatSymbols simbolo=new DecimalFormatSymbols();
+        simbolo.setGroupingSeparator('.');
+        DecimalFormat formateador = new DecimalFormat("###,###.##",simbolo);
+
+        listadoPrecio$ = new ArrayList<DataSpinnerModel>();
+
+        Double valor;
+        for (int i = 0; i < array$.length; i++)
+        {
+
+            valor = Double.parseDouble(array$[i]);
+            dataSpinnerModel = new DataSpinnerModel(i + 1, "$" + formateador.format(valor), valor);
+            listadoPrecio$.add(dataSpinnerModel);
+        }
+
+        listadoPrecioUF = new ArrayList<DataSpinnerModel>();
+
+        for (int i = 0; i < arrayUF.length; i++)
+        {
+            valor = Double.parseDouble(arrayUF[i]);
+            dataSpinnerModel = new DataSpinnerModel(i + 1, "UF " + formateador.format(valor), valor);
+            listadoPrecioUF.add(dataSpinnerModel);
+        }
+
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        initArray();
+
+        listadoActualPrecio = listadoPrecio$;
+
+        if(filtros != null && filtros.getTiposPropiedad() != null) {
+            txtTipoPropiedades.setText(TextUtils.join(", ", filtros.getTiposPropiedad()));
+        }
+
+        /*
+        listDataSpinner = new ArrayList<DataSpinnerModel>();
+
+        listDataSpinner.add(new DataSpinnerModel(0, "Desde",0));
+        listDataSpinner.addAll(listadoPrecio$);
+
+        adapterPrecioDesde = new ArrayAdapter(getBaseContext(), android.R.layout.simple_spinner_item, listDataSpinner);
+        adapterPrecioDesde.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnPrecioDesde.setAdapter(adapterPrecioDesde);
+        */
+        if(filtros.getTipoMoneda() != null) {
+            getOperacionSeleccionada().TipoMoneda = filtros.getTipoMoneda();
+            checkGroupTipoMoneda(filtros.getTipoMoneda());
+        }else
+        {
+            checkGroupTipoMoneda(filtros.getOperacionPorTipo(TipoOperacion.Venta).TipoMoneda);
+        }
+    }
+
+    private void checkGroupTipoMoneda(TipoMoneda tipoMoneda)
+    {
+        switch (tipoMoneda)
+        {
+            case Pesos:
+                groupTipoMoneda.check(R.id.optPesos);
+                break;
+            case UF:
+                groupTipoMoneda.check(R.id.optUF);
+                break;
+        }
+    }
 
     private ArrayList<Localidad> autocomplete(String input) {
         ArrayList<Localidad> resultList = null;

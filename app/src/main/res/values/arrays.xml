@@ -17,31 +17,39 @@
     </string-array>
 
     <string-array name="precio_$_array">
-        <item>var</item>
-        <item>$50.000</item>
-        <item>$100.000</item>
-        <item>$150.000</item>
-        <item>$200.000</item>
-        <item>$300.000</item>
-        <item>$400.000</item>
-        <item>$500.000</item>
-        <item>$1.000.000</item>
-        <item>$2.000.000</item>
-        <item>$5.000.000</item>
+        <item>100000</item>
+        <item>150000</item>
+        <item>200000</item>
+        <item>300000</item>
+        <item>400000</item>
+        <item>500000</item>
+        <item>1000000</item>
+        <item>2000000</item>
+        <item>5000000</item>
+        <item>10000000</item>
+        <item>20000000</item>
+        <item>40000000</item>
+        <item>50000000</item>
+        <item>80000000</item>
+        <item>100000000</item>
     </string-array>
 
     <string-array name="precio_UF_array">
-        <item>var</item>
-        <item>500UF</item>
-        <item>1.000UF</item>
-        <item>1.500UF</item>
-        <item>2.000UF</item>
-        <item>2.500UF</item>
-        <item>3.000UF</item>
-        <item>4.000UF</item>
-        <item>5.000UF</item>
-        <item>10.000UF</item>
-        <item>20.000UF</item>
+        <item>4</item>
+        <item>6</item>
+        <item>8</item>
+        <item>12</item>
+        <item>16</item>
+        <item>20</item>
+        <item>40</item>
+        <item>80</item>
+        <item>200</item>
+        <item>400</item>
+        <item>800</item>
+        <item>1600</item>
+        <item>2000</item>
+        <item>3000</item>
+        <item>4000</item>
     </string-array>
 
     <string-array name="superficies_array">
