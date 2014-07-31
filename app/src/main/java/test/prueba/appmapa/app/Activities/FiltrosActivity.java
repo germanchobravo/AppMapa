@@ -128,9 +128,17 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
                 {
                     spnPrecioDesde.setSelection(0);
                 }
+
                 if(op.PrecioHasta != null)
                 {
-                    spnPrecioHasta.setSelection(op.PrecioHasta.getIndex());
+                    for (int i= 0; i < spnPrecioHasta.getCount(); i++)
+                    {
+                        if(spnPrecioHasta.getItemAtPosition(i).equals(op.PrecioHasta))
+                        {
+                            spnPrecioHasta.setSelection(i);
+                            break;
+                        }
+                    }
                 }else
                 {
                     spnPrecioHasta.setSelection(0);
@@ -340,9 +348,7 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
                     break;
                 }
             }
-
         }
-
     }
 
     void initArray()
