@@ -15,7 +15,7 @@ public class Filtros implements Serializable {
     public Filtros() {
         OperacionFiltroModel operacionVenta = new OperacionFiltroModel();
         operacionVenta.TipoOperacion = TipoOperacion.Venta;
-        operacionVenta.TipoMoneda = TipoMoneda.UF;
+        operacionVenta.TipoMoneda = TipoMoneda.Pesos;
 
         OperacionFiltroModel operacionArriendo = new OperacionFiltroModel();
         operacionArriendo.TipoOperacion = TipoOperacion.Arriendo;
@@ -98,6 +98,7 @@ public class Filtros implements Serializable {
     public void LimpiarFiltros()
     {
         for (int i = 0; i < this.getOperaciones().size(); i++) {
+            this.getOperaciones().get(i).TipoMoneda = TipoMoneda.Pesos;
             this.getOperaciones().get(i).PrecioDesde = null;
             this.getOperaciones().get(i).PrecioHasta = null;
         }

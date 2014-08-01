@@ -126,14 +126,14 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
                 }
 
                 checkGroupTipoMoneda(op.TipoMoneda);
-                if(op.PrecioDesde != null) {
+                if(op.PrecioDesde != null && op.PrecioDesde.getIndex() > 0) {
                     spnPrecioDesde.setSelection(op.PrecioDesde.getIndex());
                 }else
                 {
                     spnPrecioDesde.setSelection(0);
                 }
 
-                if(op.PrecioHasta != null)
+                if(op.PrecioHasta != null && op.PrecioHasta.getIndex() > 0)
                 {
                     for (int i= 0; i < spnPrecioHasta.getCount(); i++)
                     {
@@ -155,11 +155,12 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
         txtTipoPropiedades = (TextView)findViewById(R.id.txtTipoPropiedades);
 
         tipoPropiedad.setOnClickListener(new View.OnClickListener() {
+            Bundle arguments;
             @Override
             public void onClick(View v) {
 
 
-                Bundle arguments = new Bundle();
+                arguments = new Bundle();
                 arguments.putSerializable("filtros", filtros);
 
                 DialogTipoPropiedades dialogTipoPropiedades = DialogTipoPropiedades.newInstance(arguments);
@@ -461,6 +462,14 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
         listDataSpinner = new ArrayList<DataSpinnerModel>();
 
         listDataSpinner.add(new DataSpinnerModel(0, "Desde",0));
+        listDataSpinner.addAll(listadoActualPrecio);
+        adapterPrecioDesde = new ArrayAdapter(getBaseContext(), android.R.layout.simple_spinner_item, listDataSpinner);
+        adapterPrecioDesde.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnPrecioDesde.setAdapter(adapterPrecioDesde);
+
+        listDataSpinner = new ArrayList<DataSpinnerModel>();
+
+        listDataSpinner.add(new DataSpinnerModel(0, "Desde",0));
         listDataSpinner.addAll(listadoSuperficie);
         ArrayAdapter<String> adapterSuperficieDesde = new ArrayAdapter(getBaseContext(),
                 android.R.layout.simple_spinner_item, listDataSpinner);
@@ -481,6 +490,7 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
         }
     }
 
+    StringBuilder sb;
     private ArrayList<Localidad> autocomplete(String input) {
         ArrayList<Localidad> resultList = null;
 

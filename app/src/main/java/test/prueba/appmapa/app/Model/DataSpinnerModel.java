@@ -1,9 +1,11 @@
 package test.prueba.appmapa.app.Model;
 
+import java.io.Serializable;
+
 /**
  * Created by gbravo on 7/29/14.
  */
-public class DataSpinnerModel {
+public class DataSpinnerModel implements Serializable {
     public DataSpinnerModel(int index, String spinnerText, Number value ) {
 
         this.spinnerText = spinnerText;
