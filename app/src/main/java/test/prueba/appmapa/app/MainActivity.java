@@ -12,17 +12,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 import test.prueba.appmapa.app.Dominio.Filtros;
 import test.prueba.appmapa.app.Dominio.Paginacion;
 import test.prueba.appmapa.app.Dominio.Propiedad;
 import test.prueba.appmapa.app.Parsers.MeliPropiedadJSONParser;
-import test.prueba.appmapa.app.Utiles.DownLoader;
 import test.prueba.appmapa.app.task.DownLoaderTask;
 import test.prueba.appmapa.app.task.IAsyncTaskDelegate;
 
@@ -48,6 +44,7 @@ public class MainActivity extends Activity {
 
     Filtros filtros;
 
+    ProgressBar cargando;
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -141,6 +138,7 @@ public class MainActivity extends Activity {
                 .hide(fragmentList)
                 .commit();
 
+        ejecutarConsulta(filtros);
 
     }
 
@@ -173,11 +171,12 @@ public class MainActivity extends Activity {
 
         };
 
+        /*
         StringBuilder url = new StringBuilder(DownLoader.API_MELI_BASE);
 
         DownLoaderTask taskPropiedades = new DownLoaderTask(delegado);
         taskPropiedades.execute(url.toString());
-
+        */
     }
 
     @Override
@@ -188,47 +187,72 @@ public class MainActivity extends Activity {
             if(resultCode == RESULT_OK){
                 filtros = (Filtros)data.getSerializableExtra("filtros");
 
-                android.app.FragmentManager fm = getFragmentManager();
-
                 Bundle arguments = new Bundle();
                 arguments.putString("localidadReferencia", filtros.getLocalidadReferencia());
 
-                if(filtros.getLocalidadReferencia() != null) {
+                /*if(filtros.getLocalidadReferencia() != null) {
                     fragmentMap.RecibeLocalidadReferencia(filtros.getLocalidadReferencia());
-                }
-                /*if(fragmentMap.isVisible())
-                {
-
-                    fm.beginTransaction()
-                            .remove(fragmentMap).commit();
-
-                    fragmentMap = FragmentMap.newInstance(arguments);
-
-                    //fragmentMap = new FragmentMap();
-
-                    fm.beginTransaction()
-                            .replace(R.id.mainContainer, fragmentMap)
-                            .commit();
-
-                }else
-                {
-
-                    fm.beginTransaction()
-                            .remove(fragmentList).commit();
-
-
-                    fragmentList = new FragmentList();
-
-                    fm.beginTransaction()
-                            .replace(android.R.id.content, fragmentList)
-                            .commit();
                 }*/
+
+                ejecutarConsulta(filtros);
 
             }
             if (resultCode == RESULT_CANCELED) {
                 //Write your code if there's no result
             }
         }
+    }
+
+
+    private static final String API_MELI_BASE = "https://mobile.mercadolibre.com.ar/sites/MLC/search?" +
+            "state=TUxDUE1FVEExM2JlYg&city=TUxDQ1NBTjk4M2M";
+
+    private void revisarVistaActiva(ArrayList<Propiedad> propiedades)
+    {
+        //android.app.FragmentManager fm = getFragmentManager();
+        if(fragmentMap.isVisible())
+        {
+            fragmentMap.setPropiedadesEnMapa(propiedades);
+
+        }
+
+    }
+
+    public void ejecutarConsulta(Filtros filtros)
+    {
+
+        IAsyncTaskDelegate delegado = new IAsyncTaskDelegate() {
+            ArrayList<Propiedad> propiedades;
+            @Override
+            public void onTaskComplete(JSONObject jsonObject) {
+                propiedades = MeliPropiedadJSONParser.parse(jsonObject);
+                revisarVistaActiva(propiedades);
+            }
+        };
+
+        StringBuilder url = new StringBuilder(API_MELI_BASE);
+
+        DownLoaderTask taskPropiedades = new DownLoaderTask(delegado);
+
+        String idCategory = filtros.getIDCategory();
+        if(idCategory.length() > 0) {
+            url.append("&" + idCategory);
+        }
+
+        if(filtros.getOperacion().PrecioDesde.getIndex() > 0 || filtros.getOperacion().PrecioHasta.getIndex() > 0) {
+            url.append("&price=");
+            url.append(filtros.getOperacion().PrecioDesde.getValue());
+            url.append("-" + filtros.getOperacion().PrecioHasta.getValue());
+        }
+
+        if(filtros.getSuperficieDesde() != null && filtros.getSuperficieHasta() != null) {
+            if (filtros.getSuperficieDesde().getIndex() > 0 || filtros.getSuperficieHasta().getIndex() > 0) {
+                url.append("&159-MTRSTOTAL=");
+                url.append(filtros.getSuperficieDesde().getValue());
+                url.append(filtros.getSuperficieHasta().getValue());
+            }
+        }
+        taskPropiedades.execute(url.toString());
     }
 
     @Override

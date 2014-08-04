@@ -177,7 +177,7 @@ public class FragmentMap extends Fragment implements OnItemClickListener, ICallB
             RecibeLocalidadReferencia(filtros.getLocalidadReferencia());
         }
 
-        //map.setMyLocationEnabled(true);
+        map.setMyLocationEnabled(true);
 
 
         return view;
@@ -201,13 +201,28 @@ public class FragmentMap extends Fragment implements OnItemClickListener, ICallB
         }
     }
 
+    public void setPropiedadesEnMapa(ArrayList<Propiedad> propiedades) {
+
+
+        map.clear();
+
+        for(int i=0; i<propiedades.size();i++){
+
+            if(propiedades.get(i).getLat() != null && propiedades.get(i).getLng() != null) {
+                latLng = new LatLng(propiedades.get(i).getLat(), propiedades.get(i).getLng());
+                markerOptions = new MarkerOptions();
+                markerOptions.position(latLng);
+                markerOptions.title(propiedades.get(i).getTitle());
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_propiedades));
+                map.addMarker(markerOptions);
+            }
+        }
+    }
+
     private void pintarPropiedades(JSONObject jsonObj) {
         ArrayList<Propiedad> propiedades = MeliPropiedadJSONParser.parse(jsonObj);
 
         //map.clear();
-
-        /** Taking each place, parses and adds to list object */
-
 
         for(int i=0; i<propiedades.size();i++){
 
@@ -389,11 +404,11 @@ public class FragmentMap extends Fragment implements OnItemClickListener, ICallB
         }
 
         // Return best reading or null
-        /*if (bestAccuracy > minAccuracy || (System.currentTimeMillis() - bestAge) > maxAge) {
+        if (bestAccuracy > minAccuracy || (System.currentTimeMillis() - bestAge) > maxAge) {
             return null;
-        } else {*/
+        } else {
         return bestResult;
-        //}
+        }
     }
 
     // Update display

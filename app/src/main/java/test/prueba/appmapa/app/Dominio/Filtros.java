@@ -5,6 +5,7 @@ import test.prueba.appmapa.app.Model.OperacionFiltroModel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -12,23 +13,34 @@ import java.util.List;
  */
 public class Filtros implements Serializable {
 
+    private DataSpinnerModel precioDesde = new DataSpinnerModel(0,"Desde",0);
+    private DataSpinnerModel precioHasta = new DataSpinnerModel(0,"Hasta",0);
     public Filtros() {
+
         OperacionFiltroModel operacionVenta = new OperacionFiltroModel();
         operacionVenta.TipoOperacion = TipoOperacion.Venta;
         operacionVenta.TipoMoneda = TipoMoneda.Pesos;
+        operacionVenta.PrecioDesde = precioDesde;
+        operacionVenta.PrecioHasta = precioHasta;
 
         OperacionFiltroModel operacionArriendo = new OperacionFiltroModel();
         operacionArriendo.TipoOperacion = TipoOperacion.Arriendo;
         operacionArriendo.TipoMoneda = TipoMoneda.Pesos;
+        operacionArriendo.PrecioDesde = precioDesde;
+        operacionArriendo.PrecioHasta = precioHasta;
 
         OperacionFiltroModel operacionArriendoTemp = new OperacionFiltroModel();
         operacionArriendoTemp.TipoOperacion = TipoOperacion.Arriendo_Temporada;
         operacionArriendoTemp.TipoMoneda = TipoMoneda.Pesos;
+        operacionArriendoTemp.PrecioDesde = precioDesde;
+        operacionArriendoTemp.PrecioHasta = precioHasta;
 
         this.Operaciones = new ArrayList<OperacionFiltroModel>();
         this.Operaciones.add(operacionVenta);
         this.Operaciones.add(operacionArriendo);
         this.Operaciones.add(operacionArriendoTemp);
+
+        this.setOperacion(operacionVenta);
     }
 
     private String localidadReferencia;
@@ -39,11 +51,61 @@ public class Filtros implements Serializable {
         this.localidadReferencia = localidadReferencia;
     }
 
-    private TipoOperacion tipoOperacion;
+    private OperacionFiltroModel Operacion;
+    public OperacionFiltroModel getOperacion() { return Operacion; }
+    public void setOperacion(OperacionFiltroModel operacion) { Operacion = operacion; }
 
-    public TipoOperacion getTipoOperacion() { return tipoOperacion; }
+    public String getIDCategory()
+    {
+        String idCategory = "";
+        if(this.tiposPropiedad != null) {
+            if (Arrays.asList(this.tiposPropiedad).contains("Departamento")) {
+                switch (this.getOperacion().TipoOperacion) {
+                    case Venta:
+                        idCategory = "category=" + TipoOperacionPropiedad.VentaDepartamento.getID();
+                        break;
+                    case Arriendo:
+                        idCategory = "category=" + TipoOperacionPropiedad.ArriendoDepartamento.getID();
+                        break;
+                    case Arriendo_Temporada:
+                        idCategory = "category=" + TipoOperacionPropiedad.ArriendoTemporadaDepartamento.getID();
+                }
+            }
 
-    public void setTipoOperacion(TipoOperacion tipoOperacion) { this.tipoOperacion = tipoOperacion; }
+            if (Arrays.asList(this.tiposPropiedad).contains("Casa")) {
+                if (idCategory.length() > 0) {
+                    idCategory += "&";
+                }
+                switch (this.getOperacion().TipoOperacion) {
+                    case Venta:
+                        idCategory += "category=" + TipoOperacionPropiedad.VentaCasa.getID();
+                        break;
+                    case Arriendo:
+                        idCategory += "category=" + TipoOperacionPropiedad.ArriendoCasa.getID();
+                        break;
+                    case Arriendo_Temporada:
+                        idCategory += "category=" + TipoOperacionPropiedad.ArriendoTemporadaDepartamento.getID();
+                        break;
+                }
+            }
+        }else
+        {
+            //SOLO CONSIDERA DEPARTAMENTO
+            switch (this.getOperacion().TipoOperacion) {
+                case Venta:
+                    idCategory = "&category=" + TipoOperacionPropiedad.VentaDepartamento.getID();
+                    break;
+                case Arriendo:
+                    idCategory = "category=" + TipoOperacionPropiedad.ArriendoDepartamento.getID();
+                    break;
+                case Arriendo_Temporada:
+                    idCategory = "category=" + TipoOperacionPropiedad.ArriendoTemporadaDepartamento.getID();
+                    break;
+            }
+        }
+
+        return idCategory;
+    }
 
     private String[] tiposPropiedad;
     public String[] getTiposPropiedad() { return tiposPropiedad; }
@@ -56,18 +118,6 @@ public class Filtros implements Serializable {
     private int banos;
     public int getBanos() { return banos; }
     public void setBanos(int banos) { this.banos = banos; }
-
-    private TipoMoneda tipoMoneda;
-    public TipoMoneda getTipoMoneda() { return tipoMoneda; }
-    public void setTipoMoneda(TipoMoneda tipoMoneda) { this.tipoMoneda = tipoMoneda; }
-
-    private DataSpinnerModel precioDesde;
-    public DataSpinnerModel getPrecioDesde() { return precioDesde; }
-    public void setPrecioDesde(DataSpinnerModel precioDesde) { this.precioDesde = precioDesde; }
-
-    private DataSpinnerModel precioHasta;
-    public DataSpinnerModel getPrecioHasta() { return precioHasta; }
-    public void setPrecioHasta(DataSpinnerModel precioHasta) { this.precioHasta = precioHasta; }
 
     private DataSpinnerModel superficieDesde;
     public DataSpinnerModel getSuperficieDesde() { return superficieDesde; }
@@ -99,14 +149,15 @@ public class Filtros implements Serializable {
     {
         for (int i = 0; i < this.getOperaciones().size(); i++) {
             this.getOperaciones().get(i).TipoMoneda = TipoMoneda.Pesos;
-            this.getOperaciones().get(i).PrecioDesde = null;
-            this.getOperaciones().get(i).PrecioHasta = null;
+            this.getOperaciones().get(i).PrecioDesde = precioDesde;
+            this.getOperaciones().get(i).PrecioHasta = precioHasta;
         }
+
+        this.setOperacion(getOperacionPorTipo(TipoOperacion.Venta));
 
         this.banos = 0;
         this.dormitorios = 0;
-        this.precioDesde = null;
-        this.precioHasta = null;
+        this.setOperacion(null);
         this.superficieDesde = null;
         this.superficieHasta = null;
         this.tiposPropiedad = null;

@@ -68,7 +68,9 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
     RadioGroup groupTipoMoneda;
     Spinner spnSuperficieDesde;
     Spinner spnSuperficieHasta;
-
+    RadioGroup groupBanos;
+    RadioGroup groupDormitorios;
+    CheckBox soloAmoblado;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,36 +110,39 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
         groupTipoOperacion.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                OperacionFiltroModel op;
+                OperacionFiltroModel operacionActual;
                 switch (checkedId)
                 {
                     case R.id.optVenta:
-                        op = filtros.getOperacionPorTipo(TipoOperacion.Venta);
+                        operacionActual = filtros.getOperacionPorTipo(TipoOperacion.Venta);
                         break;
                     case R.id.optArriendo:
-                        op = filtros.getOperacionPorTipo(TipoOperacion.Arriendo);
+                        operacionActual = filtros.getOperacionPorTipo(TipoOperacion.Arriendo);
                         break;
                     case R.id.optArriendoTemp:
-                        op = filtros.getOperacionPorTipo(TipoOperacion.Arriendo_Temporada);
+                        operacionActual = filtros.getOperacionPorTipo(TipoOperacion.Arriendo_Temporada);
                         break;
                     default:
-                        op = filtros.getOperacionPorTipo(TipoOperacion.Venta);
+                        operacionActual = filtros.getOperacionPorTipo(TipoOperacion.Venta);
                         break;
                 }
 
-                checkGroupTipoMoneda(op.TipoMoneda);
-                if(op.PrecioDesde != null && op.PrecioDesde.getIndex() > 0) {
-                    spnPrecioDesde.setSelection(op.PrecioDesde.getIndex());
-                }else
+                checkGroupTipoMoneda(operacionActual.TipoMoneda);
+
+                if(operacionActual.PrecioDesde.getIndex() > 0)
+                {
+                    spnPrecioDesde.setSelection(operacionActual.PrecioDesde.getIndex());
+                }
+                else
                 {
                     spnPrecioDesde.setSelection(0);
                 }
 
-                if(op.PrecioHasta != null && op.PrecioHasta.getIndex() > 0)
+                if(operacionActual.PrecioHasta.getIndex() > 0)
                 {
                     for (int i= 0; i < spnPrecioHasta.getCount(); i++)
                     {
-                        if(spnPrecioHasta.getItemAtPosition(i).equals(op.PrecioHasta))
+                        if(spnPrecioHasta.getItemAtPosition(i).equals(operacionActual.PrecioHasta))
                         {
                             spnPrecioHasta.setSelection(i);
                             break;
@@ -169,7 +174,7 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
             }
         });
 
-        final RadioGroup groupDormitorios = (RadioGroup)findViewById(R.id.groupDormitorios);
+        groupDormitorios = (RadioGroup)findViewById(R.id.groupDormitorios);
         groupDormitorios.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -188,7 +193,7 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
         });
 
 
-        final RadioGroup groupBanos = (RadioGroup)findViewById(R.id.groupBanos);
+        groupBanos = (RadioGroup)findViewById(R.id.groupBanos);
         groupBanos.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -242,6 +247,7 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
                     data = listadoActualPrecio.get(getOperacionSeleccionada().PrecioHasta.getIndex() -1);
                     getOperacionSeleccionada().PrecioHasta = data;
                 }
+
                 if(getOperacionSeleccionada().PrecioDesde != null && getOperacionSeleccionada().PrecioDesde.getIndex() > 0)
                 {
                     data = listadoActualPrecio.get(getOperacionSeleccionada().PrecioDesde.getIndex() -1);
@@ -269,7 +275,6 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
         });
 
         spnPrecioHasta = (Spinner)findViewById(R.id.spnrPrecioHasta);
-
 
         spnPrecioHasta.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -314,7 +319,7 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
             }
         });
 
-        final CheckBox soloAmoblado = (CheckBox)findViewById(R.id.checkSoloAmoblado);
+        soloAmoblado = (CheckBox)findViewById(R.id.checkSoloAmoblado);
         soloAmoblado.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -339,12 +344,8 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
                 spnSuperficieHasta.setSelection(0);
                 if(soloAmoblado.isChecked()) { soloAmoblado.setChecked(false); }
                 txtTipoPropiedades.setText(null);
-
-
             }
         });
-
-
     }
 
     private OperacionFiltroModel getOperacionSeleccionada()
@@ -389,7 +390,7 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
         if(dataHasta != null) {
             for (int i= 0; i < spinnerHasta.getCount(); i++)
             {
-                if(spinnerHasta.getItemAtPosition(i).equals(dataHasta))
+                if(((DataSpinnerModel)spinnerHasta.getItemAtPosition(i)).getIndex() == dataHasta.getIndex())
                 {
                     spinnerHasta.setSelection(i);
                     break;
@@ -445,27 +446,44 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
 
         initArray();
 
-        listadoActualPrecio = listadoPrecio$;
-
-        if(filtros != null && filtros.getTiposPropiedad() != null) {
+        if(filtros.getTiposPropiedad() != null) {
             txtTipoPropiedades.setText(TextUtils.join(", ", filtros.getTiposPropiedad()));
         }
 
-        if(filtros.getTipoMoneda() != null) {
-            getOperacionSeleccionada().TipoMoneda = filtros.getTipoMoneda();
-            checkGroupTipoMoneda(filtros.getTipoMoneda());
-        }else
+
+        switch (filtros.getOperacion().TipoMoneda)
         {
-            checkGroupTipoMoneda(filtros.getOperacionPorTipo(TipoOperacion.Venta).TipoMoneda);
+            case Pesos:
+                listadoActualPrecio = listadoPrecio$;
+                break;
+            case UF:
+                listadoActualPrecio = listadoPrecioUF;
+                break;
         }
 
-        listDataSpinner = new ArrayList<DataSpinnerModel>();
+        checkGroupTipoMoneda(filtros.getOperacion().TipoMoneda);
 
-        listDataSpinner.add(new DataSpinnerModel(0, "Desde",0));
-        listDataSpinner.addAll(listadoActualPrecio);
-        adapterPrecioDesde = new ArrayAdapter(getBaseContext(), android.R.layout.simple_spinner_item, listDataSpinner);
-        adapterPrecioDesde.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spnPrecioDesde.setAdapter(adapterPrecioDesde);
+
+        if(spnPrecioDesde.getCount() == 0) {
+            listDataSpinner = new ArrayList<DataSpinnerModel>();
+
+            listDataSpinner.add(new DataSpinnerModel(0, "Desde", 0));
+            listDataSpinner.addAll(listadoActualPrecio);
+            adapterPrecioDesde = new ArrayAdapter(getBaseContext(), android.R.layout.simple_spinner_item, listDataSpinner);
+            adapterPrecioDesde.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spnPrecioDesde.setAdapter(adapterPrecioDesde);
+        }
+
+
+        if(filtros.getOperacion().PrecioDesde.getIndex() > 0) {
+            spnPrecioDesde.setSelection(filtros.getOperacion().PrecioDesde.getIndex());
+        }
+
+        if(filtros.getOperacion().PrecioHasta.getIndex() > 0) {
+            spnPrecioHasta.setSelection(filtros.getOperacion().PrecioHasta.getIndex());
+        }
+
+        checkGroupTipoOperacion(filtros.getOperacion().TipoOperacion);
 
         listDataSpinner = new ArrayList<DataSpinnerModel>();
 
@@ -475,6 +493,27 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
                 android.R.layout.simple_spinner_item, listDataSpinner);
         adapterSuperficieDesde.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spnSuperficieDesde.setAdapter(adapterSuperficieDesde);
+
+        if(filtros.getSuperficieDesde() != null && filtros.getSuperficieDesde().getIndex() > 0)
+        {
+            spnSuperficieDesde.setSelection(filtros.getSuperficieDesde().getIndex());
+        }
+
+        if(filtros.getSoloAmoblado() != null) {
+            soloAmoblado.setChecked(filtros.getSoloAmoblado());
+        }
+
+        if(filtros.getDormitorios() > 0)
+        {
+            checkGroupDormitorios(filtros.getDormitorios());
+        }
+
+        if(filtros.getBanos() > 0)
+        {
+            checkGroupBanos(filtros.getBanos());
+        }
+
+
     }
 
     private void checkGroupTipoMoneda(TipoMoneda tipoMoneda)
@@ -486,6 +525,73 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
                 break;
             case UF:
                 groupTipoMoneda.check(R.id.optUF);
+                break;
+        }
+    }
+
+    private void checkGroupTipoOperacion(TipoOperacion tipoOperacion)
+    {
+        switch (tipoOperacion)
+        {
+            case Venta:
+                groupTipoOperacion.check(R.id.optVenta);
+                break;
+            case Arriendo:
+                groupTipoOperacion.check(R.id.optArriendo);
+                break;
+            case Arriendo_Temporada:
+                groupTipoOperacion.check(R.id.optArriendoTemp);
+                break;
+        }
+
+    }
+
+    private void checkGroupDormitorios(int seleccion)
+    {
+        switch (seleccion)
+        {
+            case 0:
+                groupDormitorios.check(R.id.optDorm0);
+                break;
+            case 1:
+                groupDormitorios.check(R.id.optDorm1);
+                break;
+            case 2:
+                groupDormitorios.check(R.id.optDorm2);
+                break;
+            case 3:
+                groupDormitorios.check(R.id.optDorm3);
+                break;
+            case 4:
+                groupDormitorios.check(R.id.optDorm4);
+                break;
+            case 5:
+                groupDormitorios.check(R.id.optDorm5);
+                break;
+        }
+    }
+
+    private void checkGroupBanos(int seleccion)
+    {
+        switch (seleccion)
+        {
+            case 0:
+                groupBanos.check(R.id.optBano0);
+                break;
+            case 1:
+                groupBanos.check(R.id.optBano1);
+                break;
+            case 2:
+                groupBanos.check(R.id.optBano2);
+                break;
+            case 3:
+                groupBanos.check(R.id.optBano3);
+                break;
+            case 4:
+                groupBanos.check(R.id.optBano4);
+                break;
+            case 5:
+                groupBanos.check(R.id.optBano5);
                 break;
         }
     }
@@ -623,6 +729,8 @@ public class FiltrosActivity extends Activity implements DialogTipoPropiedades.O
         switch (item.getItemId())
         {
             case R.id.action_aceptar:
+
+                filtros.setOperacion(getOperacionSeleccionada());
 
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("filtros", filtros);
